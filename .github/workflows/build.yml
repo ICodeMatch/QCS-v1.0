@@ -1,40 +1,68 @@
-name: Build APK
+name: QMS Android prueba
 
 on:
-  push:
-    branches: [ main, master ]
   workflow_dispatch:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
+  android:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-    
-    - name: Set up Java
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-    
-    - name: Install dependencies
-      run: npm install
-    
-    - name: Sync Capacitor
-      run: npx cap sync android
-    
-    - name: Build APK
-      run: cd android && ./gradlew assembleRelease
-    
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release
-        path: android/app/build/outputs/apk/release/app-release.apk
+      - uses: actions/checkout@v4
+
+      - name: Descomprimir QMS
+        run: |
+          test -f QMS-0.1-proyecto.zip
+          unzip -q QMS-0.1-proyecto.zip -d qms-source
+          test -f qms-source/QMS/package.json
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Preparar Android
+        working-directory: qms-source/QMS
+        run: |
+          npm install
+          npx cap add android
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('android/app/src/main/AndroidManifest.xml')
+          s = p.read_text()
+          s = s.replace('@mipmap/ic_launcher_round', '@drawable/qms_icon')
+          s = s.replace('@mipmap/ic_launcher', '@drawable/qms_icon')
+          s = s.replace(
+              '<application',
+              '<uses-permission android:name="android.permission.CAMERA"/><application',
+              1
+          )
+          p.write_text(s)
+          PY
+          mkdir -p android/app/src/main/res/drawable
+          cp native-assets/qms_icon.xml android/app/src/main/res/drawable/qms_icon.xml
+          npx cap sync android
+
+      - name: Compilar APK de prueba
+        working-directory: qms-source/QMS/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Guardar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: QMS-0.1-APK-PRUEBA
+          path: qms-source/QMS/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

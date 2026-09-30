@@ -13,7 +13,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Descargar repositorio
+        uses: actions/checkout@v4
 
       - name: Descomprimir QMS
         run: |
@@ -21,24 +22,30 @@ jobs:
           unzip -q QMS-0.1-proyecto.zip -d qms-source
           test -f qms-source/QMS/package.json
 
-      - uses: actions/setup-node@v4
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - uses: actions/setup-java@v4
+      - name: Preparar Java
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - uses: android-actions/setup-android@v3
+      - name: Preparar SDK Android
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools'
 
-      - name: Preparar Android
+      - name: Preparar proyecto Android
         working-directory: qms-source/QMS
         run: |
           npm install
           npx cap add android
           python3 - <<'PY'
           from pathlib import Path
+
           p = Path('android/app/src/main/AndroidManifest.xml')
           s = p.read_text()
           s = s.replace('@mipmap/ic_launcher_round', '@drawable/qms_icon')

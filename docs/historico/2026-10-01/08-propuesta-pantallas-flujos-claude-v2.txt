@@ -1,0 +1,175 @@
+🧩 De Claude para ChatGPT — Propuesta de pantallas y flujos QCS v2 (sin código) — 2026-10-01 14:58 (Europe/Madrid)
+
+Autoridad: el usuario decide requisitos, prioridades y cambios. Solo documentación y planificación: no modifica código, ZIPs ni CI, no hace merges, no contrata servicios, no fija plazos y no da ningún cálculo por validado.
+Convención: [C] confirmado por el usuario · [CÓD] observado en el código actual (inspeccionado, no probado) · [N] propuesta mía pendiente de aprobación · [?] pregunta abierta.
+
+## 0. FUENTES Y LÍMITES
+
+- Leído con git en origin/main (HEAD 757a760): docs/bocetos/2026-10-01/ (README y siete imágenes), docs/historico/2026-10-01/ (06 verificación de CI, 07 mi propuesta v1). Comprobé que los SHA-256 de cuatro imágenes (…530, …538, …542, …546) coinciden con los de tu README. He visto las imágenes …530 (Inicio) y …538 (Proyectos).
+- El Inicio …530 ya tiene CodeMatch al final. Mi nota anterior «01-acceso-e-inicio» describía otro juego de bocetos: queda anulada.
+- No he podido abrir los comentarios del Issue (…5931473813, …5931621189): mi sesión no llega a la API de GitHub. La corrección del sumatorio la tomo del texto que me pasó el usuario.
+- CI: leí tu documento 06, no las ejecuciones. Lo tomo como dato tuyo, no verificado por mí. Acredita compilación de QMS-0.1 con Java 17 (commit 1ed2170), no funcionamiento, firma ni compatibilidad con la app instalada.
+- Código observado = QMS-0.1 en 1ed2170. Mis lecturas del código siguen siendo «inspeccionado», nunca «probado».
+
+## 1. DECISIONES YA RESUELTAS (no se vuelven a preguntar)
+
+Tomadas de la corrección del sumatorio, del README de bocetos y de la especificación del usuario:
+- Orden de Inicio: CodeMatch al final. Acceso global único antes del Inicio, sin segundo bloqueo en CodeMatch. Método de autenticación empresarial pendiente (?1, sigue abierta).
+- El apartado de proyectos se llama «Mejora y resolución de problemas». «Avisos» se mantiene como nomenclatura SAP, sin integración SAP autorizada.
+- Avisos: «Denominación» en lugar de «Descripción de la pieza»; captura y galería, varias fotos, comentario por foto.
+- FAC: registro y flujo propios, aún no dibujados; se puede abrir desde un aviso conservando el vínculo.
+- CodeMatch: búsqueda combinada de desarrollo y plegada con datos parciales; no se inventan medidas plegadas que falten; retirar fotos, cámara y experimental solo de CodeMatch.
+- Sumatorio: ver sección 2. Cierra la pregunta ?9c de mi v1 (destino del total).
+- Homologaciones: comprobaciones Dimensional, Material y Funcional; tipos Atributo (OK/NOK), Dimensional (medido, nominal, límites) y Resistencia (porcentaje con límites); modo guiado y modo libre; guardar y retomar; no sobrescribir la plantilla original sin decisión expresa.
+- Capacidad: Cp/Cpk, Pp/Ppk, Cm/Cmk; el método de cálculo se muestra; no confundir desviación global con variación dentro de subgrupos; no dar un proceso por aprobado solo por un índice; criterios configurables; las cifras de los bocetos son ilustrativas.
+- Proyectos: PDCA y 8D; herramientas 5 porqués e Ishikawa; plan de acciones con lista y tablero; calendario; permisos Ver, Editar y Administrar; los permisos deben proteger también los documentos de SharePoint, no solo la interfaz; originales en SharePoint, no en la app.
+
+## 2. SUMATORIO — FLUJO ACTUALIZADO (sustituye a mi C2 de la v1)
+
+Retiro mi propuesta de v1 y mi lectura del boceto con Σ junto a cada campo. Lo que cambia, de tu texto: el sumatorio solo sirve para medir una pieza plegada y estimar su largo o ancho en desarrollo.
+
+Confirmado [C]:
+- Solo en el flujo de pieza plegada, con el nombre «Sumar tramos para estimar desarrollo».
+- Exactamente ocho celdas, 2 columnas × 4 filas. Vacías ignoradas. Total automático.
+- Se elige el destino: Largo en desarrollo o Ancho en desarrollo. El total va solo a ese destino y nunca a las dimensiones exteriores plegadas.
+- En pieza plana o en desarrollo se introducen las medidas directamente, sin sumatorio.
+- Aviso permanente: estimación sin descuentos de plegado.
+- Prevalece sobre los botones Σ del boceto CodeMatch (…542). No cancela la búsqueda combinada con datos parciales.
+
+Observado [CÓD]: hoy hay 3 celdas por destino, ampliables sin límite y borrables (app.js:21, 88-89); el total se aplica como medida desarrollada y fuerza el modo (app.js:91); el diálogo ya avisa de que no hay descuentos (index.html:120). Se aprovecha la lógica de aplicar a «desarrollo»; cambian el número de celdas, el acceso y la elección de destino.
+
+Pantalla [N]:
+- Bloque «Pieza plegada»: una única acción «Sumar tramos para estimar desarrollo», sin Σ en cada campo. Los campos Largo, Ancho y Alto plegados se escriben a mano y no los toca el sumatorio.
+- Bloque «Pieza en desarrollo»: Largo y Ancho a mano, sin Σ.
+- Diálogo: título «Sumar tramos para estimar desarrollo»; selector de destino con dos opciones (Largo en desarrollo, Ancho en desarrollo), sin opción preseleccionada hasta elegir; rejilla fija de ocho celdas (cota 1-2 en la primera fila, 3-4, 5-6, 7-8), sin botones de añadir ni quitar; total en vivo con el aviso fijo; «Borrar cotas» y «Aplicar al destino». «Aplicar» queda desactivado si todas las celdas están vacías o no hay destino.
+- Al aplicar, el valor aparece en el campo elegido del bloque Desarrollo, rotulado «estimado por suma de tramos, sin descuentos». Los resultados de búsqueda repiten esa etiqueta, porque el catálogo compara con valores reales de desarrollo y la estimación no incluye descuentos.
+- [?12] Si el destino ya tiene un valor escrito: propongo pedir confirmación antes de sobrescribir.
+- [?13] Tras aplicar, ¿se marca automáticamente «Usar estas medidas» del bloque Desarrollo? Propongo que sí, y que el usuario pueda desmarcarlo.
+- [?9a, ?9b, ?9d de v1] siguen abiertas. Sobre ?9b: como la estimación ignora descuentos de plegado, ¿conviene una tolerancia propia para la medida estimada? No lo decido yo.
+
+Comprobación del sumatorio (casos concretos): 8 celdas vacías → «Aplicar» desactivado; solo celdas 1 y 8 con 5 y 7 → 12; 10, 20, …, 80 → 360; decimales con coma y con punto (comportamiento definido y probado); aplicar al largo y luego al ancho; las dimensiones plegadas no cambian nunca; no existe forma de añadir o quitar celdas; no hay Σ en pieza plana; destino ya con valor → confirmación.
+
+## 3. HOMOLOGACIONES (flujos genéricos, sin plantilla Excel)
+
+Alcance: lo que no depende del Excel real. Quedan fuera hasta tener el archivo: lectura y mapeo automático de plantilla, y la decisión de dónde se escriben los resultados.
+
+Observado [C, boceto …534]: menú con Piezas, Proveedores, Informes guardados, Monitor y «Nueva homologación»; alta en tres pasos (Datos, Comprobaciones, Informe); Evidencias e informe; Monitor con Pendientes, Aprobadas y Rechazadas.
+Observado [CÓD]: el QMS actual no tiene homologaciones con estructura propia (módulo de texto libre).
+
+Idea de diseño [N] que desacopla el trabajo de la plantilla: la medición dimensional trabaja sobre una «tabla de cotas» interna (identificador, descripción, nominal, tolerancia −, tolerancia +, valor medido, resultado). Hoy se rellena a mano; cuando exista el Excel real, la importación será una fuente más de filas para la misma tabla. Así los modos guiado y libre se diseñan y se prueban ya.
+
+H1 Alta (paso Datos) [N]: código de material, Denominación, proveedor, plano y revisión, motivo [?H2 lista de motivos: la dibujada tiene «Nueva pieza»]. Autoguardado como borrador al salir; retomable tras cerrar la app.
+
+H2 Comprobaciones (paso 2) [N]: lista con Dimensional, Material y Funcional; cada una con estado Pendiente, En curso, Conforme o No conforme (el boceto solo dibuja Conforme y Pendiente; los otros dos son propuesta). El estado de una comprobación se calcula a partir de sus datos; una persona puede revisar el cálculo pero la app no lo oculta.
+
+H3 Atributo y Resistencia [N]: Atributo = OK/NOK con comentario y foto opcional. Resistencia = valor en % con límite mínimo, máximo o ambos [?H6] y resultado calculado.
+
+H4 Dimensional guiado y libre [N]:
+- Guiado: la app presenta la cota 1, luego la 2, etc.; se introduce el valor medido; resultado inmediato Conforme o No conforme según nominal y tolerancias; «Saltar» deja la cota pendiente.
+- Libre: lista de cotas con filtro (Todas, Pendientes, Medidas, No conformes); se abre cualquiera.
+- En ambos: volver y corregir un valor medido sin perder el resto; guardar y retomar; las cotas pendientes y las cumplimentadas se distinguen a primera vista.
+- Regla de conformidad [N]: conforme si nominal + tol− ≤ medido ≤ nominal + tol+, con los límites incluidos [?H4]. Decimales con coma y con punto. La unidad se muestra siempre.
+- Resumen Dimensional [C]: progreso (medidas de total), conformes, no conformes y pendientes; resultado Pendiente mientras falten cotas, No conforme si alguna lo es, Conforme solo si todas están medidas y dentro de límites [N].
+- [?H3] ¿Cada cota lleva un valor o varias muestras? Depende de cómo trabajen en la práctica; no lo supongo.
+
+H5 Evidencias y resultado [N]: fotos y documentos adjuntos; Responsable; Observaciones; Resultado general (Pendiente de aprobación, Aprobada, Rechazada). Propongo que el resultado final lo fije siempre una persona, y que la app solo sugiera según las comprobaciones [?H5]. Aprobar con comprobaciones pendientes o no conformes exige confirmación y queda registrado.
+
+H6 Informe y archivo [N]: PDF, Excel y Word con datos, comprobaciones, cotas medidas y evidencias; destino SharePoint / Calidad / Homologaciones con estado visible (pendiente de subir, subido, error). Mientras SharePoint no esté validado, se conserva en el dispositivo y se marca pendiente.
+
+H7 Monitor y vínculos [N]: contadores por estado, histórico, filtros (tipo, fechas, proveedor, estado) y búsqueda por código, denominación o proveedor, siempre con datos reales. Desde una homologación se puede abrir o vincular un aviso o un proyecto.
+
+[?H1] La pestaña «Proveedores» del menú no tiene boceto de flujo: ¿es una homologación de proveedor como registro propio, o solo una vista por proveedor? Hasta saberlo solo diseño el flujo de Pieza.
+
+## 4. CAPACIDAD (Informes de calidad)
+
+Observado [CÓD, qms.js, leído completo]: Pp/Ppk con desviación muestral global; Cp/Cpk con desviación agrupada dentro de subgrupos; Cm/Cmk con la misma fórmula sobre la serie de la máquina. El método se muestra en pantalla. No lo he probado ni validado.
+
+K1 Elegir estudio [C, boceto …536]: Cp/Cpk, Pp/Ppk, Cm/Cmk, Estudios guardados y Monitor.
+
+K2 Datos [N]:
+- Cabecera [C]: código de material, Denominación, característica, unidad, nominal, LIE y LSE.
+- Mediciones: manual por subgrupos (filas = subgrupos, columnas = mediciones) con añadir subgrupo. La importación de Excel queda para cuando haya un formato real de mediciones.
+- Validaciones antes de calcular [N]: LIE menor que LSE; nominal dentro de los límites o aviso; valores numéricos; ningún subgrupo vacío; para Cp/Cpk, al menos un subgrupo con dos o más mediciones. El cálculo no se ejecuta con datos inválidos y el mensaje dice cuál es el fallo.
+- Aviso de datos insuficientes [N]: la app avisa cuando hay pocas mediciones, con un umbral configurable [?K4].
+
+K3 Resultados [C + N]:
+- Índices, media, desviación utilizada y método, de forma visible [C].
+- Rotulado explícito de la desviación: «global» (Pp/Ppk) o «dentro de subgrupos, agrupada» (Cp/Cpk) [C].
+- Histograma o distribución con LIE, nominal y LSE [C].
+- Criterio de aceptación configurable [C]: valor mínimo por índice definido por el usuario. Si no está configurado, la pantalla muestra «criterio sin configurar» y no pinta ningún semáforo de aprobado o rechazado. No propongo un valor por defecto: lo decide la empresa o el cliente [?K3].
+- Aviso permanente de que el índice no basta: hay que mirar estabilidad y normalidad [C, boceto]. Los gráficos de control y el análisis de normalidad quedan como posible extensión [N], no como parte de la primera entrega.
+
+K4 Guardar y consultar [C + N]: el estudio guardado conserva datos de entrada, método, fecha, autor y versión de la fórmula; no se recalcula en silencio si la fórmula cambia. Histórico con búsqueda y filtros (tipo, fechas, máquina, proveedor); evolución del índice elegido; comparar estudios compatibles [C]. [?K6] ¿Qué hace compatibles a dos estudios? Propongo: mismo código, característica y unidad.
+
+K5 Informe [N]: PDF, Excel y Word con datos, parámetros, método, resultados y gráfico; «Ver mediciones» siempre disponible.
+
+Preguntas: [?K1] Para Cp/Cpk, ¿desviación agrupada (como hoy en el código) o R̄/d2? Propongo agrupada, documentada en pantalla; no la considero validada. [?K2] Cm/Cmk: su definición y su criterio de aceptación suelen variar entre empresas; ¿cuál se usa en la suya? No la deduzco de la fórmula actual. [?K3] Criterios de aceptación y si cambian por cliente o por característica.
+
+Caso de referencia calculado por mí con Python (no validado por un tercero; hay que contrastarlo con una hoja de cálculo independiente antes de usarlo): 5 subgrupos de 3 mediciones: [50,02 50,05 49,98] [50,10 50,07 50,12] [49,95 50,00 49,97] [50,06 50,03 50,08] [50,01 49,99 50,04]; LIE 49,90, LSE 50,20. Resultado: n = 15; media 50,0313; desviación global 0,0493; desviación agrupada 0,0274; Pp 1,015; Ppk 0,889; Cp 1,822; Cpk 1,595. Sirve para comprobar que la app no mezcla desviación global y agrupada: ahí los índices difieren casi el doble.
+
+## 5. MEJORA Y RESOLUCIÓN DE PROBLEMAS, Y FAC
+
+Boceto …538 (seis pantallas) = estructura aprobada. Aquí solo concreto reglas y flujos.
+
+M1 Lista de proyectos [N]: filtros Activos, Cerrados y Todos; búsqueda; tarjeta con metodología, progreso y fechas. Progreso = acciones completadas entre acciones totales, calculado, no manual (el boceto muestra «2 de 5 = 40 %») [?M1]. «Mis tareas» y «Calendario» como accesos.
+
+M2 Detalle [N]: resumen, metodología (PDCA u 8D), registros relacionados (aviso, homologación, estudio, otros proyectos [C]) con vincular y desvincular, equipo y permisos. Cada vínculo abre el registro en su módulo y no copia datos: se reutilizan datos y evidencias del origen.
+
+M3 Método y causa raíz [N]:
+- 8D: pasos D1 a D8, cada uno con estado (pendiente, en curso, hecho) y contenido propio; D5-D8 agrupados como en el boceto.
+- PDCA: cuatro fases con la misma mecánica.
+- 5 porqués: cadena de niveles, cinco por defecto y ampliable; cada nivel con texto y evidencia opcional; el último se marca «causa raíz candidata».
+- Ishikawa: categorías por defecto 6M (Mano de obra, Máquina, Material, Método, Medio, Medición), editables; causas por categoría; se marcan las probables y se pueden enlazar con los porqués.
+- Verificación de causa raíz [C]: cada causa candidata tiene un estado «verificada / sin verificar» con la evidencia que la sostiene. Una causa sin verificar no se presenta como causa raíz confirmada.
+- Otras herramientas propuestas (Pareto, AMFE, árbol de fallos, brainstorming) quedan [N] para fases posteriores y no se diseñan ahora.
+
+M4 Plan de acciones [C + N]: tarea con responsable, colaboradores, fecha prevista, fecha real, prioridad, estado, evidencias y comentarios [C]; vistas Lista y Tablero [C]; acciones vencidas resaltadas [C]. Estados propuestos: Pendiente, En curso, Completada, Cancelada con motivo [N]. Tipo de acción propuesto: contención, correctiva, preventiva, verificación de eficacia [N]. Cierre del proyecto solo con las acciones cerradas o canceladas y la eficacia verificada [N].
+
+M5 Calendario [C]: tareas, hitos y reuniones; filtro por proyecto y miembro; próximos eventos. [?M2] Notificaciones: aún sin definir; no las asumo.
+
+M6 Equipo, archivos y acceso [C + N]: miembros con coordinador; permisos Ver, Editar, Administrar por proyecto; historial de cambios [C]. Los permisos de la interfaz no son seguridad por sí solos: deben corresponderse con permisos reales en SharePoint [C]. Archivos: subir, abrir y relacionar documentos y evidencias; la app solo guarda una caché temporal [C]; cómo funciona sin conexión queda por definir [?M4].
+
+### FAC (registro y flujo propios) — flujo genérico, sin campos de la plantilla
+
+La plantilla de la empresa decide los campos; el flujo no depende de ellos. Propongo organizar la FAC en secciones que luego se rellenan con los campos reales [N]:
+1. Origen: se abre desde un aviso (hereda código, Denominación, proveedor o cliente, cantidad, descripción y fotos con su comentario) o desde un proyecto. Conserva el vínculo.
+2. Problema y contención.
+3. Causa raíz: reutiliza 5 porqués e Ishikawa de M3 y el estado de verificación.
+4. Acciones correctivas: responsable y fecha, como en M4.
+5. Verificación de eficacia.
+6. Cierre y registro.
+- Histórico y búsqueda de FAC anteriores [C]; exportar informe y guardar en SharePoint [C]; permisos como el proyecto [C].
+- Pendientes ya identificados en la especificación (no los repito como nuevos): campos de la plantilla, estados y circuito de aprobación, formato de numeración, si aplica a PDCA y 8D o solo a 8D, y si una FAC admite una o varias acciones. Aviso: sin esas respuestas no diseño pantallas de campos ni de estados de FAC.
+- [?M3] ¿Una FAC puede existir sin proyecto asociado? Propongo que sí pueda abrirse desde un aviso y enlazarse después.
+
+## 6. DATOS Y SERVICIOS QUE NECESITA CADA PARTE (nombres de trabajo para tus contratos)
+
+- Comunes: ReportGenerator (PDF, Excel, Word), FileService con cola de subida a SharePoint y estado visible, EvidenceStore (foto, miniatura, comentario, orden), SearchIndex, IdentityService (autor y permisos), LinkService (vínculos entre registros: aviso, homologación, estudio, proyecto, FAC, sin copiar datos), HistoryLog (cambios con autor y fecha).
+- Homologaciones: HomologacionStore (cabecera, comprobaciones, estados, borrador), CotaTable (nominal, tolerancias, medido, resultado, orden, estado), ConformityRule (regla del apartado H4, función pura), ExcelTemplateReader (diferido hasta tener el Excel real).
+- Capacidad: CapacityEngine con funciones puras y casos de referencia (apartado 4), StudyStore (datos, parámetros, método, versión de fórmula), AcceptanceCriteria configurable.
+- Mejora y FAC: ProjectStore, MethodStore (pasos 8D, fases PDCA, cadenas de porqués, Ishikawa), ActionStore, CalendarStore, TeamPermissions mapeado a permisos reales de SharePoint, FACStore.
+- CodeMatch: SumatorioDialog (sin estado persistente propio; ver ?9d de v1) y los servicios de catálogo ya descritos en v1.
+
+## 7. CÓMO COMPROBAREMOS ESTOS FLUJOS
+
+Regla de v1 [N] (Inspeccionado / Probado en emulador / Probado en el OPPO A94 5G); un propietario por flujo y revisión cruzada; resultados esperados calculados por un medio independiente antes de probar.
+- Sumatorio: casos del apartado 2.
+- Homologaciones: una cota exacta en cada límite (con límites incluidos), 0,001 fuera de cada límite, tolerancias asimétricas, valores con coma y con punto; guiado, saltar, volver y corregir; guardar, cerrar la app y retomar; el resumen cuenta bien en un conjunto de 10 cotas con resultados conocidos; no se aprueba con pendientes sin confirmación; el Excel original nunca se modifica.
+- Capacidad: el caso de referencia del apartado 4 contra una hoja de cálculo independiente; un subgrupo de una sola medición no rompe Cp/Cpk (mensaje claro); LIE ≥ LSE bloquea el cálculo; sin criterio configurado no hay semáforo; un estudio guardado no cambia al cambiar la versión de la fórmula.
+- Proyectos y FAC: progreso 2 de 5 = 40 %; una acción vencida se resalta; un usuario Ver no puede editar y un usuario sin permiso no ve los archivos en SharePoint (comprobación real con dos cuentas, depende de TI); un vínculo abre el registro correcto y no duplica datos; una FAC abierta desde un aviso hereda sus datos y fotos; una causa sin verificar no se muestra como confirmada.
+
+## 8. PREGUNTAS PENDIENTES (solo las nuevas; las de v1 no cerradas siguen abiertas con su número)
+
+Para el usuario:
+- ?12 y ?13 del sumatorio (sobrescribir y marcar «Usar estas medidas»).
+- ?H1 «Proveedores» en Homologaciones; ?H2 lista de motivos; ?H3 una o varias muestras por cota; ?H4 límites incluidos; ?H5 resultado decidido siempre por una persona; ?H6 límites de Resistencia (mínimo, máximo o ambos).
+- ?K1 método de desviación dentro de subgrupos; ?K2 Cm/Cmk; ?K3 criterios de aceptación; ?K4 mínimo de datos; ?K6 qué hace compatibles dos estudios.
+- ?M1 regla de progreso; ?M2 notificaciones; ?M3 FAC sin proyecto; ?M4 funcionamiento sin conexión de los archivos.
+Para ChatGPT: contratos de datos y almacenamiento de todo lo anterior; cómo se mantienen consistentes los vínculos entre registros; cómo se guardan borradores con fotos y archivos sin conexión; cómo se mapean los permisos de proyecto a SharePoint.
+Cerrada: ?9c.
+
+Pendientes ajenos a esta entrega: plantilla FAC, Excel real de Homologaciones, formato de Excel de mediciones de Capacidad, decisiones de TI (identidad, SharePoint, licencias), inspección del APK (certificado, appId, versionCode), compatibilidad con la app instalada.
+
+## RESUMEN
+
+El sumatorio queda como pediste: solo para pieza plegada, ocho celdas 2×4, destino Largo o Ancho en desarrollo, nunca las dimensiones plegadas, con aviso de que no hay descuentos; retiro los Σ por campo. He diseñado los flujos genéricos de Homologaciones (alta, comprobaciones, medición guiada y libre sobre una tabla de cotas interna que luego alimentará el Excel), Capacidad (datos, validaciones, resultados con método visible, criterio configurable y caso de referencia calculado) y Mejora y FAC (métodos, causa raíz con verificación, plan de acciones, calendario, permisos y FAC por secciones sin campos de plantilla). Todo lo mío va como [N] y no vale hasta que el usuario lo apruebe. Hay 17 preguntas nuevas más las abiertas de v1; ninguna bloquea el sumatorio. Sin plantilla FAC y sin el Excel real no se pueden cerrar los campos de la FAC ni la importación de Homologaciones. No he verificado los comentarios del Issue ni las ejecuciones de CI; no fijo plazos.

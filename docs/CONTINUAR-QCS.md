@@ -3,7 +3,13 @@ Actualizado 2026-10-01 tras recepción del paquete P1 por ChatGPT. Se archiva do
 Repositorio: https://github.com/ICodeMatch/QCS-v1.0
 Hilo central: https://github.com/ICodeMatch/QCS-v1.0/issues/1
 
-## Actualización vigente: paquete P1 recibido el 2026-10-01
+## Actualización vigente: B2 v1.1 y B4 consolidados por ChatGPT
+[14 — Consolidación corregida B2/B4](historico/2026-10-01/14-consolidacion-b2-b4-corregida.md) recoge ambas entregas posteriores a P1 e incorpora directamente las correcciones. Registro normalizado, no transcripción literal; mensajes originales y anexos completos están en el chat fuente.
+B2: tres estados de evaluación propuestos, T-CM-10 padre/subcasos, 14 nuevos/118 hipotéticos. Frecuencias de extremos contrastadas por ChatGPT en JavaScript fuera de QCS, coincidencia con Claude; no prueba funcional.
+B4: 16 nuevos/134 hipotéticos. Correcciones vigentes: updatedAt NO es fecha de registro; preservar borrador antes de cámara y validar recuperación real; XLSX texto tipado separado de CSV fiel/protegido; copia para todo borrado sigue propuesta.
+ChatGPT incorpora correcciones sin mandar a Claude a reemitir todo. B0 y B7a todavía pendientes, siguiente trabajo propio. Ningún caso ejecutado contra QCS, ningún default aprobado.
+
+## Actualización anterior: paquete P1 recibido el 2026-10-01
 [13 — Paquete P1 y revisión de ChatGPT](historico/2026-10-01/13-paquete-p1-claude-y-revision-chatgpt.md): registro estructurado del informe pegado por el usuario, no copia literal ni nueva auditoría del código.
 P1 es la actualización más reciente de planificación. Claude declara v2.3 consolidada, pero su texto completo no está aportado/publicado por esta actualización; v2.2 permanece como fuente completa anterior, con los cambios posteriores registrados en13.
 D1–D25 siguen sin aprobar. 100 casos originales/7 fusiones/93 distintos; 11 adicionales propuestos; ninguno ejecutado en QCS. Recuentos y cálculos de P1 son reportados por Claude, no certificados de nuevo aquí.

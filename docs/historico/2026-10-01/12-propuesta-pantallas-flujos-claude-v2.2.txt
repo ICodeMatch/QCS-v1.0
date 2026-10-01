@@ -1,0 +1,162 @@
+🧩 De Claude para ChatGPT — Propuesta de pantallas y flujos QCS v2.2 (consolidada, sin código) — 2026-10-01 16:30 (Europe/Madrid)
+
+Autoridad: el usuario decide requisitos, prioridades y cambios. Solo documentación y auditoría en lectura: no se modifica código, ZIPs ni CI, no hay merges, no se cierra el Issue, no se contrata nada. Sin plazos.
+Esta v2.2 sustituye en conjunto a v1, v2 y v2.1 (que quedan como histórico) e incorpora las ocho correcciones y las dos precisiones que aceptamos. Es la única fuente que necesitas para preparar los contratos.
+
+Convención:
+[C] confirmado por el usuario (instrucción explícita) · [DOC11] dato de tu inspección de PVR.01 y PVR.02, que yo NO he visto · [CÓD] leído por mí en el código (inspeccionado, no probado) · [N] propuesta mía NO aprobada · [PROV] parámetro o regla abierta: puedes redactar el contrato provisional con alternativas, pero hay que resolverla antes de implementar · [D#] valor por defecto numerado del apartado 9, que requiere aprobación explícita del usuario.
+
+## 0. LÍMITES Y FUENTES
+
+- Leído por mí con git en origin/main (HEAD c122874): CONTINUAR-QCS, documentos 06, 07, 08, 11 y los bocetos. No he visto los dos Excel (no me han llegado), ni los comentarios del Issue, ni las ejecuciones de CI.
+- Código observado = QMS-0.1 en 1ed2170: inspeccionado, nada probado. Nada de lo descrito aquí está implementado ni probado en ejecución.
+- Las cifras y nombres de los bocetos son ilustrativos. Los bocetos son diseño, no funciones.
+- Ningún valor por defecto está aprobado. Un valor sin aprobar nunca se trata como decisión.
+
+## 1. DECISIONES CONFIRMADAS [C]
+
+- Nombre QCS; azul oscuro, verde azulado y fondo claro con tarjetas blancas; acceso global antes del Inicio y sin segundo PIN en CodeMatch. Método de autenticación empresarial: pendiente.
+- Inicio, en este orden: No Conformidades / Avisos, Homologaciones, Informes de calidad, Mejora y resolución de problemas, CodeMatch AL FINAL. Barra inferior Inicio, Registros, Ajustes.
+- Avisos: interno, proveedor y cliente; Denominación; cantidad, problema y acción inmediata; fotos y comentarios; borradores; PDF, Excel y Word; archivo, histórico, búsqueda y monitor. «Avisos» es nomenclatura SAP: número SAP opcional, sin integración autorizada.
+- Homologaciones: importar el Excel real conservando el original; mapeo, vista previa y reutilización; tipos Dim., % y Attribute; modo guiado y libre, saltar, retomar y corregir.
+- Capacidad: Cp/Cpk dentro de subgrupos, Pp/Ppk global, Cm/Cmk de máquina; método visible; criterios configurables; validación independiente; nunca aprobar solo por un índice.
+- Mejora: PDCA y 8D, causa raíz verificada, 5 porqués e Ishikawa, acciones, calendario, equipo, permisos y vínculos. FAC: registro propio, con formato a nuestro criterio, como propuesta y no como procedimiento empresarial aprobado.
+- Archivos definitivos en SharePoint desde móvil real, multiusuario; identidad y permisos del lado del servidor; OneDrive en el PC no lo resuelve.
+- CodeMatch: se conservan la búsqueda por medidas, el catálogo (importación y exportación Excel/CSV), planos y archivos, copias de seguridad y el requisito de informes PDF (hoy no implementado). Se retiran fotos, cámara y funciones experimentales SOLO de CodeMatch, incluido «Fotografiar plano»; no se borran fotos históricas por retirar la interfaz y antes hay copia, exportación y análisis. Dos bloques, desarrollo y plegada, combinables con datos parciales; no se sustituyen valores desconocidos por 0 ni se inventan medidas plegadas. Orientación invertida coherente por candidato.
+- Sumatorio (ver 3.2). Catálogo de unas 18.000 referencias con largo y ancho en desarrollo y denominación; no confundirlo con los Excel de Homologaciones.
+- Autoridad del usuario, reparto con revisión cruzada, un propietario por tarea; sin autorización de implementación.
+
+## 2. NAVEGACIÓN E INICIO
+
+Observado [CÓD]: qms.js home() muestra CodeMatch primero y «Tu espacio de calidad»; CodeMatch trae su propio bloqueo con PIN (index.html:15, 4 a 8 cifras) y navegación inferior propia (Identificar, Biblioteca, Planos, Excel) con vistas Híbrido, Fotos, ArUco y Patrones. Si el PIN cifra datos o solo bloquea la pantalla lo valida ChatGPT.
+Pantallas [N]:
+- S1 Acceso: único punto de entrada; estados sin sesión, sesión activa y error; la identidad queda tras un IdentityService.
+- S2 Inicio: cinco tarjetas en el orden confirmado, con contadores reales y estado vacío (nunca cifras de ejemplo); acción destacada «Nuevo aviso».
+- S3 Registros: listado global de avisos, homologaciones, estudios, proyectos y FAC, filtrable por tipo, que abre cada registro en su módulo [D1].
+- S4 Ajustes: cuenta, estado de SharePoint, copias de seguridad, almacenamiento, versión.
+- S5 CodeMatch: se entra desde la tarjeta final sin pedir nada y con «Volver a Inicio QCS».
+
+## 3. CODEMATCH
+
+### 3.1 Búsqueda combinada
+Observado [CÓD]: selector excluyente measureMode (index.html:37), un par Largo/Ancho, runSearch elige un campo u otro (app.js:189); el alto solo se compara con el alto plegado.
+Propuesta [N]: dos bloques en «Identificar», Desarrollo (largo, ancho) y Plegada (largo, ancho, alto), todos opcionales; un bloque vacío no filtra. Con ambos rellenos se cumplen los dos (Y) [D8]. Si se filtra por plegada, los registros sin datos plegados quedan fuera y la pantalla lo dice («N referencias sin datos plegados no evaluadas»); no se rellenan huecos. Una tolerancia común, y orientación invertida coherente por candidato [D9]. Se conservan código o denominación y los demás filtros.
+
+### 3.2 Sumatorio [C]
+- Solo se ofrece al medir una pieza plegada, con la acción «Sumar tramos para estimar desarrollo». En pieza plana o en desarrollo se escriben las medidas directamente, sin sumatorio y sin botones Σ por campo (prevalece sobre el boceto).
+- Exactamente ocho celdas, 2 columnas × 4 filas; vacías ignoradas; total automático; aviso fijo «estimación sin descuentos de plegado».
+- Se elige el destino: Largo en desarrollo o Ancho en desarrollo. El total va solo ahí, nunca a las dimensiones exteriores plegadas. No cancela la búsqueda combinada.
+Observado [CÓD]: hoy hay 3 celdas por destino, ampliables y borrables (app.js:21, 88-89), y el total se aplica como medida desarrollada forzando el modo (app.js:91).
+Diálogo [N]: selector de destino sin opción preseleccionada; rejilla fija de ocho celdas; total en vivo; «Borrar cotas» y «Aplicar al destino» (desactivado si todas están vacías o no hay destino). El valor aplicado se rotula «estimado por suma de tramos, sin descuentos», también en los resultados. Detalles [D10, D11, D12].
+
+### 3.3 Retirada de cámara, fotos y experimental [C, con lista [N]]
+Observado [CÓD]: vistas Híbrido (index.html:22), Fotos (27), ArUco (86) y Patrones (78); sección de análisis de fotos en Identificar (36); entradas capture="environment" (36, 72, 90, 108); botón «Fotografiar plano» (108); app.js importa aruco.js, contour.js y hybrid-lab.js (líneas 2-4).
+Propuesta [N]: se eliminan esas vistas, el análisis por foto y las capturas con cámara; los planos entran con «Elegir archivos técnicos». Antes de tocar nada, copia de seguridad; las fotos y atributos ya guardados no se borran sin autorización expresa (ver 8). El PIN propio desaparece al integrarse; lo que protegía lo audita ChatGPT.
+
+## 4. AVISOS (primer módulo completo)
+
+Observado [CÓD]: el módulo actual (qms.js modules.nc) tiene 10 campos de texto libre, estados Abierta, En análisis, En acción y Cerrada, búsqueda por texto y CSV; no tiene Denominación, cantidad, acción inmediata, fotos, informes, monitor ni vínculos.
+Flujos [N]:
+- F1 Alta rápida: elegir tipo; código, Denominación, proveedor o cliente (en interno, «Área o proceso» [D6]), cantidad, descripción y acción inmediata; fotos con comentario; autoguardado como borrador y retomable tras cerrar la app. Para pasar de Borrador a Registrado: tipo, código, Denominación y descripción.
+- F2 Resumen e informe: datos y galería con comentarios; «Generar informe» en PDF, Excel o Word con las fotos y su comentario; plantilla genérica propia [D2].
+- F3 Archivo: «Guardar en SharePoint» con estado visible (pendiente de subir, subido, error, reintento); mientras SharePoint no esté validado el informe se conserva en el dispositivo y se marca pendiente; nunca se presenta como archivado sin serlo.
+- F4 Histórico y búsqueda: por número de aviso, código, Denominación o texto; filtros combinables por tipo, fechas, proveedor o cliente y estado.
+- F5 Monitor: avisos por estado, tipo y proveedor o cliente, evolución mensual y antigüedad de abiertos, con datos reales y estado vacío.
+- F6 Vínculo: «Abrir acción correctiva / proyecto / FAC» conserva la referencia.
+Estados provisionales: Borrador → Registrado → En análisis → En acción → Cerrado [D3]. Número SAP opcional a mano [D4]. Proveedores y clientes: lista local editable, importable desde Excel [D5]. Fotos: sin límite fijo aprobado; aviso y compresión con parámetro [D7].
+
+## 5. HOMOLOGACIONES
+
+Fuente [DOC11]: PVR.01 R02 (una hoja, un bloque de 15 características, columnas B:P) y PVR.02 R02 (dos bloques, B:P y S:AG, separador Q); hojas protegidas; identificador en fila 14, tipo en fila 15 (Dim., Attribute, %), especificación fila 16, tolerancias superior e inferior filas 17 y 18, nominal fila 19, límites filas 20 y 21, 30 muestras en filas 24 a 53, resultado agregado fila 54. IDs de PVR.01: 1 a 15; PVR.02: 1, 2, 3.1, 3.2, 4, 5.1, 5.2, 5.3, 6, 7.1, 7.2, 7.3, 8, 9, 10 y, en el segundo bloque, 11 a 18; el rango AA:AG no tiene ID aunque tenga fórmulas. Las 30 filas son la capacidad de estas plantillas, no un máximo general de QCS [PROV, D17].
+
+### 5.1 Modelo de datos [N]
+- Homologación: un archivo = una homologación con uno o dos bloques. El segundo bloque replica la cabecera por fórmulas y no es una homologación aparte.
+- Cabecera [DOC11]: documento, fecha, código, revisión, Denominación, cliente, proveedor, realizado por, pedido o lote, proceso, operación, línea, máquina, condiciones dimensionales y funcionales, equipos y observaciones. El alta ofrece estos campos (obligatorios solo los que decida el usuario) y la importación los rellena.
+- Característica: identificador como TEXTO, tal como está en el Excel y en su orden (3.1 y 3.10 no son decimales; no se reconstruye un cero final perdido en un ID numérico); texto visible; tipo; nominal; tolerancias; límites calculados; unidad; muestras requeridas; muestras; origen (archivo, hoja, celda, fecha de lectura, huella). No se crean características para rangos con formato o fórmulas pero sin ID.
+- Tipos y límites [DOC11]: Dim. = nominal + tolerancia superior e inferior absolutas; la inferior se suma al nominal, así que el signo importa. % = tolerancias relativas al nominal: límite superior = nominal × (1 + tol. sup.), límite inferior = nominal × (1 + tol. inf.), con 5 % = 0,05 y −5 % = −0,05 [DOC11]; las medidas se registran en la unidad del nominal, no necesariamente en porcentaje (nominal 100 con ±5 % → 95 a 105). Atributo = OK o NOK. Comparación inclusiva (los extremos son conformes) según la lectura de fórmulas; falta ejecución. No asumo que % equivalga a «Resistencia» ni que las características PVR sean exclusivamente la comprobación Dimensional.
+- Diferencias de la plantilla que la vista previa señala: tolerancia vacía en Dim. (la plantilla suma 0) frente a vacía en % (resultado vacío); pide corregir la especificación incompleta y no aprueba nada automáticamente.
+- Valores vacíos: nunca se convierten en conformes ni en ceros. Una tolerancia inferior positiva se avisa, no se corrige en silencio.
+
+### 5.2 Importación [N]
+1 Elegir archivo (SharePoint o dispositivo); se lee una copia y el original no se modifica nunca (huella igual antes y después; las hojas están protegidas y no se escribe en ellas). 2 Detección de hojas, bloques y características. 3 Vista previa del mapeo ANTES de confirmar: por cada dato, identificador y texto originales, tipo, nominal, tolerancias, límites, muestras ya presentes y hoja y celda de origen, con avisos por fila. 4 Corrección manual de hoja, columnas o celdas y configuración reutilizable por plantilla y revisión. 5 Confirmar. El parser y su tratamiento de errores son de ChatGPT.
+Normalización de atributos [DOC11]: sin distinguir mayúsculas ni espacios; OK → OK; NOK, «Not ok» y «No ok» → NOK; texto desconocido → pendiente de revisión; vacío → pendiente. Nunca OK automático. No replicamos la fórmula original de la plantilla, que puede dar OK con texto distinto de NOK o con menos muestras de las necesarias.
+
+### 5.3 Muestras, estados y resultado
+Contrato de evaluación [DOC11, propuesto, no implementado]:
+- Resultado de muestra: pendiente, inválida, conforme o no conforme. Requisito completo y unidad válida antes de evaluar. Los valores inválidos no cuentan como conformes.
+- Conformidad y completitud son dos indicadores separados, con nValidas y nRequeridas. Una muestra fuera de límites no se oculta por estar la característica incompleta (aparece No conforme). Medidas conformes pero incompletas: «Parcial», nunca OK.
+- Muestras requeridas: las fija el usuario por característica o por homologación [PROV, decisión pendiente 2]; no hay valor por defecto aprobado. Se pueden registrar más que las requeridas hasta el máximo [D17].
+- El redondeo de pantalla no cambia el dato evaluado; la precisión y la tolerancia numérica se definen antes de implementar [PROV].
+- Cambiar la especificación o las muestras requeridas deja historial y reevalúa sin borrar valores.
+- [Precisión B, NO aprobado, D16] Dos conceptos distintos, no un único «no aplicable»: (a) excluir una característica de esta homologación, con motivo, usuario y fecha; (b) justificar una muestra omitida, con motivo, usuario y fecha. Son propuestas y no están aprobadas.
+- La aprobación es una decisión humana aparte: el resultado general lo fija una persona; una excepción o aprobación con características pendientes, parciales o no conformes lleva autor, fecha y motivo y nunca transforma una medición NOK o pendiente en OK [D15].
+
+### 5.4 Medición [N]
+Recorrido por característica (todas sus muestras, luego la siguiente) o por pieza (muestra 1 de todas, luego la 2); modo libre con tabla completa y filtros (Todas, Pendientes, Parciales, No conformes). Entrada según tipo: Dim. = valor numérico y unidad con límites visibles antes de medir; % = medida en la unidad del nominal con límites calculados a la vista; Atributo = botones OK y NOK sin texto libre, con comentario y foto opcionales. «Saltar» deja la muestra pendiente; se vuelve atrás y se corrige sin perder el resto; autoguardado y retomada tras cerrar la app; pendientes identificables con icono o texto, no solo con color. Coma o punto decimal.
+
+### 5.5 Resto del flujo [N]
+Alta con cabecera y comprobaciones (Dimensional, Material, Funcional, con estados calculados), evidencias y documentos, observaciones y responsable, informe en PDF, Excel y Word, archivo en SharePoint con estado visible, monitor (pendientes, aprobadas y rechazadas) con búsqueda y filtros, y vínculos a avisos y proyectos. Se diseña solo el flujo de Pieza; la pestaña «Proveedores» queda sin flujo [D13]; lista de motivos editable [D14]. Dónde van los resultados (copia del Excel, registro QCS o ambos) es la decisión pendiente 1; mientras tanto QCS guarda su registro propio y no escribe en ningún Excel.
+
+## 6. INFORMES DE CALIDAD (CAPACIDAD)
+
+Observado [CÓD, qms.js]: Pp/Ppk con desviación muestral global; Cp/Cpk con desviación agrupada dentro de subgrupos; Cm/Cmk con la misma fórmula sobre la serie de la máquina. No probado ni validado.
+- Datos [N]: código, Denominación, característica, unidad, nominal, LIE, LSE; mediciones manuales por subgrupos (la importación de Excel queda para cuando haya un formato real). Validaciones: LIE < LSE; valores numéricos; sin subgrupos vacíos; para Cp/Cpk, al menos un subgrupo con dos o más mediciones; mensajes que dicen cuál es el fallo; aviso de pocos datos con umbral configurable [D18].
+- Resultados [C + N]: índices, media, desviación utilizada rotulada «global» o «dentro de subgrupos, agrupada», método visible, distribución con LIE, nominal y LSE; criterio de aceptación configurable y, si no está configurado, «criterio sin configurar» y sin semáforo; aviso permanente de que el índice no basta (estabilidad y normalidad como posible extensión).
+- Guardar y consultar: el estudio conserva datos, parámetros, método, fecha, autor y versión de la fórmula y no se recalcula en silencio; histórico con filtros; comparar estudios compatibles [D19]; informe PDF, Excel y Word.
+- Pendiente del usuario: método de desviación dentro de subgrupos (agrupada o R̄/d2), definición de Cm/Cmk y criterios de aceptación (decisión pendiente 4).
+- Caso de referencia calculado por mí con Python, NO validado por un tercero: 5 subgrupos de 3 mediciones ([50,02 50,05 49,98] [50,10 50,07 50,12] [49,95 50,00 49,97] [50,06 50,03 50,08] [50,01 49,99 50,04]), LIE 49,90 y LSE 50,20. n = 15, media 50,0313, desviación global 0,0493, agrupada 0,0274; Pp 1,015, Ppk 0,889, Cp 1,822, Cpk 1,595. Hay que contrastarlo con datos y una hoja de cálculo independientes antes de usarlo.
+
+## 7. MEJORA Y RESOLUCIÓN DE PROBLEMAS, Y FAC
+
+### 7.1 Proyectos [N, sobre el boceto aprobado]
+- Lista (Activos, Cerrados, Todos; búsqueda; progreso = acciones completadas entre totales, calculado [D20]; Mis tareas y Calendario).
+- Detalle: resumen, metodología PDCA u 8D, registros relacionados (aviso, homologación, estudio, FAC, otros proyectos) vinculados sin copiar datos, equipo y permisos.
+- Método: 8D con D1 a D8 y estado por paso; PDCA con cuatro fases; 5 porqués (cinco por defecto, ampliable, el último marcado «causa raíz candidata»); Ishikawa (6M por defecto, editable). Una causa raíz sin verificar nunca se muestra como confirmada. Otras herramientas (Pareto, AMFE, árbol de fallos, brainstorming) quedan para fases posteriores.
+- Plan de acciones: responsable, colaboradores, fechas prevista y real, prioridad, estado (Pendiente, En curso, Completada, Cancelada con motivo), evidencias y comentarios; vistas Lista y Tablero; vencidas resaltadas; tipos contención, correctiva, preventiva y verificación de eficacia. El proyecto solo se cierra con acciones cerradas o canceladas y eficacia verificada.
+- Calendario de tareas, hitos y reuniones; notificaciones fuera de la primera entrega [D21].
+- Equipo, archivos y acceso: miembros y coordinador; permisos Ver, Editar y Administrar; historial de cambios. Los permisos de la interfaz no son seguridad: deben corresponderse con permisos reales de SharePoint. Archivos: originales en SharePoint; caché de lo ya abierto y cola de subida, sin prometer la revocación instantánea de copias sin conexión [D23].
+
+### 7.2 FAC (propuesta para revisión del usuario, no procedimiento aprobado) [N]
+Estados: Borrador → Abierta → Contención → Análisis → Acciones → Verificación de eficacia → Pendiente de aprobación → Cerrada; una FAC no eficaz o rechazada vuelve a Acciones con motivo y queda en el historial. No se pasa a «Pendiente de aprobación» sin eficacia verificada, no se cierra sin aprobación, un estado nunca avanza solo.
+Cabecera: número (ver abajo), título, estado, prioridad (Normal o Alta), fecha de apertura, abierta por, responsable.
+1 Identificación y origen: tipo de origen (aviso interno, de proveedor o de cliente; proyecto; otro), vínculo al origen, código afectado, Denominación, proveedor o cliente, cantidad afectada, lote o albarán (opcional), fecha, lugar o proceso de detección, detectado por. Si viene de un aviso, se COPIA como instantánea con su procedencia y vínculo; las ediciones de la FAC son independientes y no cambian el aviso ni mutan evidencias compartidas.
+2 Descripción y evidencias: Qué, Dónde, Cuándo, Impacto o cantidad; fotos con comentario; documentos.
+3 Contención inmediata: acciones (descripción, responsable, fecha, estado) y material afectado (cantidad revisada, cantidad no conforme, disposición: retener, seleccionar, retrabajar, rechazar, devolver al proveedor, otra).
+4 Causa raíz: de aparición y, opcionalmente, de no detección; método (5 porqués, Ishikawa, otro) con enlace al análisis; verificación (qué se hizo, evidencia, verificada o no).
+5 Acciones correctivas y preventivas: como el plan de acciones; campo «¿afecta a otros códigos, líneas o clientes?».
+6 Comprobación de eficacia: criterio, responsable, fecha, resultado (eficaz o no), evidencia.
+7 Aprobación y cierre: aprobador, fecha, decisión (aprobar, o rechazar con motivo), comentario de cierre y aprendizajes (opcional). Quién aprueba y si puede ser quien la abrió: decisión pendiente 3.
+Relaciones: desde un aviso («Abrir FAC») o desde un proyecto (vinculable y accesible desde la causa raíz); puede abrirse sin proyecto y enlazarse después [D22]. Varias acciones por FAC. Histórico y búsqueda; informe en PDF, Word o Excel y carpeta en SharePoint; permisos como el proyecto.
+Numeración: identificador local estable e independiente del número definitivo FAC-AAAA-NNN, asignado por el servidor de forma idempotente y sin colisiones; el mecanismo es tuyo [D24].
+
+## 8. DATOS Y SERVICIOS (nombres de trabajo para tus contratos)
+
+- Comunes: IdentityService; ReportGenerator (PDF, Excel, Word); FileService con cola de subida (outbox) a SharePoint y estado visible; EvidenceStore (original, miniatura, comentario, orden); SearchIndex; LinkService (vínculos entre registros sin copiar datos); HistoryLog (cambios con autor y fecha); NumberingService.
+- Avisos: AvisoStore (borradores, filtros, búsqueda), CatalogLookup (código, Denominación y proveedor; CodeMatch ya guarda código y nombre por referencia [CÓD]).
+- CodeMatch: catálogo local con medidas desarrolladas y plegadas, alto, espesor, material, mano y revisión con versión de esquema; ImportExport Excel/CSV; PlanStore; BackupService compatible con copias v1 y v2 [CÓD app.js:311]; SumatorioDialog sin estado persistente [D10]. IndexedDB está en DB_VERSION=4 [CÓD]; el cambio de versión no garantiza migración: copia previa y conservación de datos y adjuntos los define ChatGPT.
+- Homologaciones: HomologacionStore (cabecera, bloques, estado, borrador), TablaCaracteristicas, MuestraStore (valor, autor, fecha, estado), ConformityRule (función pura por tipo, contrato 5.3), ExcelTemplateReader (mapeo, vista previa, configuración guardada, huella del original, errores).
+- Capacidad: CapacityEngine (funciones puras con casos de referencia), StudyStore, AcceptanceCriteria.
+- Mejora y FAC: ProjectStore, MethodStore, ActionStore compartido, CalendarStore, TeamPermissions (mapeado a permisos reales de SharePoint), FACStore, ContainmentStore, ApprovalLog.
+Parámetros [PROV] que el contrato puede dejar configurables: máximo de muestras por característica (30 observado), muestras requeridas, umbral de aviso de fotos y de datos, precisión numérica, política de caché, formato de numeración, estados de muestra y de FAC.
+
+## 9. VALORES POR DEFECTO: REQUIEREN APROBACIÓN EXPLÍCITA DEL USUARIO
+
+No se aprueban por silencio. Puedes redactar contratos provisionales con alternativas; hay que resolverlos antes de implementar.
+D1 Registros = listado global filtrable por tipo · D2 informe de aviso con plantilla genérica propia · D3 estados de aviso Borrador, Registrado, En análisis, En acción, Cerrado · D4 «Nº aviso SAP» opcional escrito a mano · D5 proveedores y clientes en lista local editable, importable desde Excel · D6 avisos internos con «Área o proceso» · D7 fotos sin límite fijo, con aviso y compresión · D8 búsqueda combinada con Y · D9 una tolerancia común y etiqueta «estimado» · D10 el total del sumatorio se vacía al aplicar; si se cierra sin aplicar, se conserva mientras siga abierta la búsqueda · D11 confirmar antes de sobrescribir un destino con valor · D12 marcar «Usar estas medidas» del bloque Desarrollo al aplicar, desmarcable · D13 Homologaciones: solo flujo de Pieza · D14 lista de motivos editable · D15 resultado general fijado por una persona; excepciones con autor, fecha y motivo · D16 estados de muestra y los dos «no aplicable» de la precisión B · D17 máximo de muestras configurable (30 es capacidad de las plantillas) · D18 aviso de pocos datos con umbral configurable, sin umbral impuesto · D19 estudios compatibles = mismo código, característica y unidad · D20 progreso de proyecto calculado · D21 sin notificaciones en la primera entrega · D22 FAC puede existir sin proyecto; instantánea al heredar de un aviso · D23 caché de lo abierto y cola de subida · D24 identificador local estable y número definitivo asignado por servidor.
+Las cinco decisiones del usuario, listadas una vez y sin tratarlas como bloqueos totales: 1 resultados de Homologaciones (Excel, QCS o ambos) · 2 muestras requeridas y quién las fija · 3 aprobador de la FAC · 4 método de Capacidad, Cm/Cmk y criterios · 5 identidad y SharePoint con TI.
+
+## 10. CÓMO COMPROBAREMOS CADA FLUJO [N]
+
+Regla: un flujo se da por cumplido solo con evidencia, marcado como Inspeccionado, Probado en emulador o Probado en el OPPO A94 5G; un propietario por flujo y revisión cruzada; los resultados esperados se calculan por un medio independiente antes de probar. Los casos siguientes son casos definidos, no pruebas ejecutadas.
+- Acceso y navegación: aparece Acceso antes del Inicio; CodeMatch no pide PIN; orden de tarjetas exactamente el confirmado.
+- Sumatorio: 8 celdas vacías → «Aplicar» desactivado; solo celdas 1 y 8 con 5 y 7 → 12; 10, 20, …, 80 → 360; decimales con coma y punto; aplicar al largo y al ancho; las dimensiones plegadas no cambian nunca; no se pueden añadir ni quitar celdas; no hay Σ en pieza plana.
+- Búsqueda combinada: sobre un catálogo de prueba con resultados conocidos: solo desarrollo; solo plegada; ambas; datos parciales; registro sin plegado excluido y avisado; tolerancia y orientación invertida; código o Denominación con medidas.
+- Retirada de cámara: cero capture= en CodeMatch; importar, exportar, planos y copia siguen funcionando; una copia antigua real del usuario se restaura sin pérdida; no se borran fotos históricas.
+- Avisos: alta mínima; salir y reabrir recupera el borrador; cinco fotos con comentario sobreviven a reiniciar el móvil; sin conexión funciona; PDF, Excel y Word contienen todos los campos y fotos y abren en móvil y PC; subida real a SharePoint con cuenta de prueba, segundo usuario con permiso y otro sin permiso; histórico y monitor contra un recuento independiente.
+- Homologaciones [DOC11]: atributos OK → OK, NOK, «Not ok» y «No ok» → NOK, desconocido → revisión, vacío → pendiente; Dim. nominal 50 con ±0,5 → 49,5 a 50,5, extremos dentro y 49,499 y 50,501 fuera; % nominal 100 con ±5 % → 95 a 105, extremos dentro y 94,999 y 105,001 fuera; 5 requeridas con 3 válidas conformes → parcial, con una NOK → no conforme; tolerancia inferior positiva → aviso; nominal o tolerancia ausentes o límites incoherentes → no evaluable; identificadores 3.1 y 3.10 como texto; vista previa contrastada con al menos 10 celdas, incluidas del segundo bloque y de las muestras; huella del original idéntica antes y después; guardar, cerrar y retomar; excepción de aprobación con autor, fecha y motivo sin cambiar mediciones.
+- Capacidad: el caso de referencia del apartado 6 contra una hoja de cálculo independiente; subgrupo de una sola medición sin romper Cp/Cpk; LIE ≥ LSE bloquea; sin criterio no hay semáforo; un estudio guardado no cambia al cambiar la fórmula.
+- Proyectos y FAC: progreso 2 de 5 = 40 %; acción vencida resaltada; usuario Ver no edita y usuario sin permiso no ve los archivos de SharePoint (dos cuentas reales; depende de TI); FAC abierta desde un aviso copia datos y fotos sin cambiar el aviso; transiciones no permitidas bloqueadas; no se cierra sin eficacia y aprobación; causa sin verificar no sale como confirmada; FAC rechazada vuelve a Acciones y conserva el historial.
+
+## RESUMEN
+
+La v2.2 consolida v1, v2 y v2.1 en un único documento con las ocho correcciones y las dos precisiones aceptadas: Homologaciones con atributos normalizados (OK → OK), tipo % como tolerancia relativa al nominal con medida en la unidad del nominal, comparación inclusiva a confirmar, cabecera ampliada, vista previa del mapeo, conformidad y completitud separadas, decisión humana distinta del cálculo, y «no aplicable» desdoblado (característica excluida y muestra omitida) como propuesta no aprobada; FAC con instantánea al heredar de un aviso; sumatorio sin cambios. Los 24 valores por defecto van numerados y ninguno está aprobado: puedes redactar contratos provisionales con alternativas, pero hay que resolverlos antes de implementar. No he visto los Excel, los comentarios del Issue ni las ejecuciones de CI, y nada se ha probado en ejecución; mis datos sobre las plantillas son los de tu inspección. Lo que sigue es tuyo: contratos, parser, numeración, SharePoint, retirada del PIN, APK y contraste de Capacidad. No fijo plazos.

@@ -1,7 +1,23 @@
 # CONTINUAR QCS — punto de entrada para nuevos chats
-Actualizado 2026-10-01 15:43 Europe/Madrid por ChatGPT. Se archiva documentación, sin modificar código/ZIP/CI.
+Actualizado 2026-10-01 16:00 Europe/Madrid por ChatGPT. Se archiva documentación, sin modificar código/ZIP/CI.
 Repositorio: https://github.com/ICodeMatch/QCS-v1.0
 Hilo central: https://github.com/ICodeMatch/QCS-v1.0/issues/1
+
+## Actualización: propuesta consolidada v2.2 recibida
+[12 — Propuesta v2.2 completa](historico/2026-10-01/12-propuesta-pantallas-flujos-claude-v2.2.txt) es ahora la referencia consolidada de pantallas y flujos; v1, v2 y v2.1 quedan como histórico. Archivo Texto pegado(6).txt, SHA-256 del adjunto original: 2c181b1e10cdc12fd0ee1db4fbd63990d2343392a455e0f3c061a8ef1b8fa5a7. Copia de texto UTF-8 con saltos de línea normalizados.
+Firma declarada Claude 16:30; recibido antes, a las 16:00 aproximadamente: conservar como fecha declarada, no evidencia de hora de ejecución.
+
+Claude acepta las ocho correcciones y las dos precisiones: contratos provisionales con alternativas son posibles sin aprobar defaults; distinguir característica excluida de muestra omitida. Los 24 defaults D1–D24 siguen sin aprobar. No convertirlos en requisitos.
+Estado común explícito: reparto y secuencia aceptados; aún faltan contratos técnicos, pruebas y decisiones. Claude no ha recibido los dos Excel y no puede consultar Issue/CI; coordinación manual.
+
+Revisión de ChatGPT de v2.2, antes de contratos:
+- Avisos F1 vuelve a proponer código y Denominación obligatorios para registrar. El caso de código desconocido durante una incidencia sigue abierto; documentar alternativa y no imponer obligación sin decisión.
+- CatalogLookup menciona proveedor, pero el catálogo CodeMatch con código/denominación no demuestra maestro ni relación de proveedores. Usar fuente independiente verificada o dato manual.
+- SumatorioDialog “sin estado persistente” debe aclararse frente a D10 que conserva cotas al cerrar sin aplicar mientras la búsqueda siga abierta; separar estado temporal de sesión de persistencia entre cierres de app.
+- Estudios compatibles requieren revisar límites, método, población y condiciones, además de código/característica/unidad. D19 no basta para declarar comparabilidad estadística.
+- La importación de Excel de mediciones de Capacidad es requisito de alcance; diferir un formato o primera fase es propuesta, no eliminarla por defecto.
+- No tratar protección de hoja como impedimento para leer, ni como garantía de autenticidad.
+Contratos aún NO entregados. Esta actualización no aprueba implementación.
 
 ## Instrucción para quien continúa
 Lee este documento, los informes vinculados y el hilo completo antes de actuar. No repitas preguntas resueltas ni uses los comparativos iniciales retractados como verdad actual. Usuario autoridad. No hay autorización de implementación, merges, reemplazos de ZIP, cambios CI, cierre Issue ni contratación. Sí hay autorización para auditoría en lectura y archivo/publicación de documentación.
@@ -80,7 +96,7 @@ Hallazgoslectura no pruebanfuncionalidad. No repetir estadosantiguos retractados
 
 ## Pendientes y siguiente trabajo concreto
 Prioridad ChatGPT, DOCUMENTACIÓN/AUDITORÍA:
-1 Leer v2 íntegra y v2.1 con correcciones. Preparar contratos aún NO ENTREGADOS:
+1 Leer v2.2 consolidada con la revisión anterior; v1/v2/v2.1 son histórico. Preparar contratos aún NO ENTREGADOS:
 HomologacionStore/TablaCaracteristicas/MuestraStore/ConformityRule/ExcelTemplateReader;
 FACStore/ContainmentStore/ActionStore/LinkService/ApprovalLog;
 AvisoStore/EvidenceStore/CatalogLookup/ReportGenerator/FileServiceoutbox/SearchIndex/IdentityService/NumberingService.

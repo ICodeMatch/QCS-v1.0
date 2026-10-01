@@ -1,10 +1,23 @@
 # CONTINUAR QCS — punto de entrada para nuevos chats
-Actualizado 2026-10-01 16:00 Europe/Madrid por ChatGPT. Se archiva documentación, sin modificar código/ZIP/CI.
+Actualizado 2026-10-01 tras recepción del paquete P1 por ChatGPT. Se archiva documentación, sin modificar código/ZIP/CI.
 Repositorio: https://github.com/ICodeMatch/QCS-v1.0
 Hilo central: https://github.com/ICodeMatch/QCS-v1.0/issues/1
 
-## Actualización: propuesta consolidada v2.2 recibida
-[12 — Propuesta v2.2 completa](historico/2026-10-01/12-propuesta-pantallas-flujos-claude-v2.2.txt) es ahora la referencia consolidada de pantallas y flujos; v1, v2 y v2.1 quedan como histórico. Archivo Texto pegado(6).txt, SHA-256 del adjunto original: 2c181b1e10cdc12fd0ee1db4fbd63990d2343392a455e0f3c061a8ef1b8fa5a7. Copia de texto UTF-8 con saltos de línea normalizados.
+## Actualización vigente: paquete P1 recibido el 2026-10-01
+[13 — Paquete P1 y revisión de ChatGPT](historico/2026-10-01/13-paquete-p1-claude-y-revision-chatgpt.md): registro estructurado del informe pegado por el usuario, no copia literal ni nueva auditoría del código.
+P1 es la actualización más reciente de planificación. Claude declara v2.3 consolidada, pero su texto completo no está aportado/publicado por esta actualización; v2.2 permanece como fuente completa anterior, con los cambios posteriores registrados en13.
+D1–D25 siguen sin aprobar. 100 casos originales/7 fusiones/93 distintos; 11 adicionales propuestos; ninguno ejecutado en QCS. Recuentos y cálculos de P1 son reportados por Claude, no certificados de nuevo aquí.
+B1 entregado como documento pendiente revisión y decisiones, no cerrado/implementado.
+Reparto concreto que asume ChatGPT: B0 preservación/PIN/migración y B7a contratos comunes locales. Claude continúa B2 CodeMatch/pantallas/reglas/casos; comparte inventario UI sin duplicar auditoría de almacenes. Contratos todavía NO entregados.
+Homologación de proveedores sigue en alcance (HO-9), flujo pendiente de definición. B2 remite a P7 y HO-9 a P2.
+Porcentaje en búsqueda es comportamiento existente declarado, no requisito aprobado. Cinco entradas de cámara según lectura de Claude; retirar UI no borra evidencia. Sumatorio decimal futuro, sin redondeo arbitrario.
+Recuperación de acceso: conservar petición visual previa “¿Has olvidado la contraseña?”, funcionamiento pendiente; ausencia en siete bocetos no cancela esa petición.
+Nuevas reglas contenidas en casos (copia para todo borrado, cierre8D, selector de temas) siguen propuestas. Identificadores/orden/muestras proceden de cada plantilla, no renumerar.
+Capacidad: P1 refiere contraste previo de ChatGPT del caso agrupado, mientras el registro anterior decía pendiente. No resolver por inferencia: enlazar dataset/cálculo independiente antes de declarar validado; d2 sigue pendiente de contraste.
+Solo documentación autorizada. No código, ZIP, CI, merges, cierre de Issue ni aprobación de defaults.
+
+## Histórico: propuesta consolidada v2.2 recibida
+[12 — Propuesta v2.2 completa](historico/2026-10-01/12-propuesta-pantallas-flujos-claude-v2.2.txt) es la fuente completa anterior de pantallas y flujos; leer junto con la actualización P1; v1, v2 y v2.1 quedan como histórico. Archivo Texto pegado(6).txt, SHA-256 del adjunto original: 2c181b1e10cdc12fd0ee1db4fbd63990d2343392a455e0f3c061a8ef1b8fa5a7. Copia de texto UTF-8 con saltos de línea normalizados.
 Firma declarada Claude 16:30; recibido antes, a las 16:00 aproximadamente: conservar como fecha declarada, no evidencia de hora de ejecución.
 
 Claude acepta las ocho correcciones y las dos precisiones: contratos provisionales con alternativas son posibles sin aprobar defaults; distinguir característica excluida de muestra omitida. Los 24 defaults D1–D24 siguen sin aprobar. No convertirlos en requisitos.
@@ -96,7 +109,7 @@ Hallazgoslectura no pruebanfuncionalidad. No repetir estadosantiguos retractados
 
 ## Pendientes y siguiente trabajo concreto
 Prioridad ChatGPT, DOCUMENTACIÓN/AUDITORÍA:
-1 Leer v2.2 consolidada con la revisión anterior; v1/v2/v2.1 son histórico. Preparar contratos aún NO ENTREGADOS:
+1 Leer P1 y su revisión (13) junto con v2.2 completa; v2.3 completa aún no acreditada en esta actualización. Prioridad B0 y B7a según reparto concreto. Preparar contratos aún NO ENTREGADOS:
 HomologacionStore/TablaCaracteristicas/MuestraStore/ConformityRule/ExcelTemplateReader;
 FACStore/ContainmentStore/ActionStore/LinkService/ApprovalLog;
 AvisoStore/EvidenceStore/CatalogLookup/ReportGenerator/FileServiceoutbox/SearchIndex/IdentityService/NumberingService.

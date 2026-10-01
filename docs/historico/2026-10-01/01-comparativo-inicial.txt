@@ -1,0 +1,443 @@
+# ANÁLISIS COMPARATIVO PROFUNDO: QMS-0.1-proyecto.zip vs QCS-v1.0-FIXED.zip
+
+## 1. CONFIGURACIÓN Y METADATA
+
+### QMS-0.1-proyecto.zip (617 KB)
+- **Nombre del proyecto:** `qms-quality-management`
+- **Versión:** 0.1.0
+- **App ID:** com.qualitycontrol.suite
+- **App Name:** QMS
+- **Capacitor:** 6.2.2 (core + android)
+- **Dependencias adicionales:** Ninguna
+- **Estructura:** QMS/ (raíz del proyecto)
+- **Subdirectorios:** .github/, native-assets/, www/
+- **Android config:** NO EXISTE
+- **README.md:** NO EXISTE
+
+### QCS-v1.0-FIXED.zip (341 KB)
+- **Nombre del proyecto:** `quality-control-suite`
+- **Versión:** 1.0.0
+- **App ID:** com.qualitycontrol.suite (IDÉNTICO)
+- **App Name:** Quality Control Suite
+- **Capacitor:** 6.2.2 + splash-screen, app plugins
+- **Dependencias adicionales:** @capacitor/app, @capacitor/splash-screen, @capacitor/cli
+- **Estructura:** QCS-Final/ (raíz del proyecto)
+- **Subdirectorios:** android/, www/
+- **Android config:** SÍ - Gradle 8.2.1, configuración completa, build.gradle, gradle.properties, gradlew
+- **README.md:** SÍ - Documentación completa de compilación, requisitos JDK 11, troubleshooting
+
+**DIFERENCIA CRÍTICA:** QCS-1.0 ES COMPILABLE; QMS-0.1 NO TIENE CONFIGURACIÓN ANDROID INCLUIDA
+
+---
+
+## 2. ESTRUCTURA DE CÓDIGO FUENTE (www/)
+
+### QMS-0.1: Arquitectura
+```
+www/
+├── codematch/              (módulo CodeMatch COMPLETO v2.9.0)
+│   ├── index.html
+│   ├── app.js              (FUNCIONAL - 1000+ líneas)
+│   ├── styles.css
+│   ├── core/
+│   │   ├── codematch-id.js (Schema v0.1-experimental)
+│   │   ├── evidence.js
+│   │   ├── probes.js
+│   │   ├── candidates.js
+│   │   ├── fusion.js
+│   │   ├── catalog-provider.js
+│   │   └── test-log.js
+│   ├── vendor/
+│   │   ├── pdf.min.mjs (PDF.js library)
+│   │   ├── pdf.worker.min.mjs
+│   │   └── jszip.min.js (Excel import/export)
+│   ├── aruco.js            (Detección ArUco - FUNCIONAL)
+│   ├── contour.js          (Análisis de contorno)
+│   ├── edge-consensus.js   (Consenso de métodos)
+│   ├── method-consensus.js (Combinación de técnicas)
+│   ├── hybrid-lab.js       (Lab experimental)
+│   ├── guided-segmentation.js
+│   ├── demo-catalog.js     (Catálogo demo)
+│   ├── sw.js               (Service Worker)
+│   └── manifest.webmanifest
+├── index.html              (Launcher / Menú principal)
+├── qms.js                  (MÓDULOS NO-CODEMATCH - ~500 líneas minificadas)
+└── qms.css
+```
+
+### QCS-1.0: Arquitectura
+```
+www/
+└── index.html              (ÚNICO ARCHIVO - Launcher + todos los módulos en HTML inline)
+```
+
+**DIFERENCIA CRÍTICA:** 
+- QMS-0.1: CodeMatch es un módulo separado + 4 módulos QMS juntos
+- QCS-1.0: Launcher HTML con stubs de módulos (SOLO INTERFAZ, SIN LÓGICA DE NEGOCIO)
+
+---
+
+## 3. ANÁLISIS DE FUNCIONALIDADES IMPLEMENTADAS
+
+### CodeMatch (v2.9.0)
+
+**QMS-0.1:** ✅ **COMPLETAMENTE FUNCIONAL**
+- Detección ArUco (detectAruco, detectArucoAtPoint, detectArucoFromCorners)
+- Análisis de contorno automatizado (analyzeContour)
+- Medición por planos (Planta, Alzado, Isométrica)
+- Búsqueda por dimensiones con tolerancia
+- Importación Excel/CSV → parseSpreadsheet, parseCSV
+- Exportación Excel → exportExcel (genera XLSX con ZIP interno)
+- Importación/exportación de backups JSON
+- Almacenamiento offline IndexedDB (records, attachments, patterns, arucoTests, technicalRuns, recordHistory, settings)
+- Búsqueda de referencias (code, name, material, hand, revision)
+- Comparación de dimensiones con opción de intercambio (dimsMatch con swapped)
+- Cálculo de tolerancia automática con fold calculator (8 celdas 2x4)
+- Sumatorio de cotas para largo/ancho desarrollado
+- Gestión de ajustes manuales de ArUco y dimensiones
+- Segmentación guiada y consenso multimétodo (edge-consensus + method-consensus)
+- Historial de revisiones
+- Características adicionales: mano, revisión, estado, procedencia, validación, punzonados, agujeros, ventanas
+- Descargas de planos PDF y adjuntos
+
+**QCS-1.0:** ❌ **SOLO INTERFAZ (UI STUB)**
+- Launcher HTML con botón para CodeMatch v2.9.0
+- NO HAY CÓDIGO JAVASCRIPT DE LÓGICA
+- NO HAY INDEXEDDB, NO HAY ALMACENAMIENTO
+- Botón "Abrir y completar" redirige a... (onclick sin función)
+- Las features listadas son solo `<div class="info-box">` con texto descriptivo
+
+**VEREDICTO:** CodeMatch está AUSENTE de QCS-1.0. Solo existe la UI.
+
+---
+
+### No Conformidades (NC)
+
+**QMS-0.1:** ✅ **COMPLETAMENTE FUNCIONAL**
+```javascript
+const modules = {
+  nc: {
+    title: 'No conformidades',
+    fields: [
+      ['title', 'Descripción breve', 'text', true],
+      ['origin', 'Origen', 'select:Interna,Cliente,Proveedor'],
+      ['reference', 'Referencia de pieza'],
+      ['supplier', 'Cliente / proveedor'],
+      ['owner', 'Responsable'],
+      ['due', 'Fecha objetivo', 'date'],
+      ['status', 'Estado', 'select:Abierta,En análisis,En acción,Cerrada'],
+      ['cause', 'Causa raíz', 'textarea'],
+      ['action', 'Acción correctiva', 'textarea'],
+      ['verification', 'Verificación de eficacia', 'textarea']
+    ]
+  }
+}
+```
+- CRUD completo (crear, leer, actualizar, eliminar)
+- Búsqueda con filtros (reference, responsable, description)
+- Exportación CSV
+- Persistencia en localStorage
+- Validación de campos requeridos
+
+**QCS-1.0:** ❌ **SOLO INTERFAZ**
+- Botón `onclick="alert('Nueva NC')"`
+- Contador stat-card: `<div class="stat-value" id="ncCount">0</div>`
+- NO HAY JAVASCRIPT FUNCIONAL
+- NO HAY PERSISTENCIA
+- NO HAY BÚSQUEDA
+
+**VEREDICTO:** NC totalmente funcional en QMS-0.1, completamente ausente en QCS-1.0.
+
+---
+
+### Homologaciones
+
+**QMS-0.1:** ✅ **COMPLETAMENTE FUNCIONAL**
+```javascript
+const modules = {
+  homolog: {
+    title: 'Homologaciones',
+    fields: [
+      ['title', 'Pieza / proveedor', 'text', true],
+      ['reference', 'Referencia'],
+      ['supplier', 'Proveedor'],
+      ['owner', 'Responsable'],
+      ['due', 'Fecha objetivo', 'date'],
+      ['status', 'Estado', 'select:Pendiente,En revisión,Aprobada,Rechazada'],
+      ['requirements', 'Requisitos y documentación', 'textarea'],
+      ['decision', 'Resultado y observaciones', 'textarea']
+    ]
+  }
+}
+```
+- CRUD completo
+- Exportación CSV
+- Tracking de cambios por timestamp
+- Persistencia en localStorage
+
+**QCS-1.0:** ❌ **SOLO INTERFAZ**
+- Botón `onclick="alert('Nueva aprobación')"`
+- Contadores ficticios
+- NO HAY LÓGICA
+
+---
+
+### Informes de Calidad (Cpk, Ppk, Cmk)
+
+**QMS-0.1:** ✅ **COMPLETAMENTE FUNCIONAL**
+```javascript
+function stats(r) {
+  // Cálculo de Pp, Ppk con desviación muestral
+}
+function withinStats(r) {
+  // Cálculo de Cp, Cpk con desviación agrupada dentro de subgrupos
+}
+function machineStats(r) {
+  // Cálculo de Cm, Cmk (máquina)
+}
+```
+- Campos: LSL, USL, mediciones (espacios/;/líneas), subgrupos, serie de máquina
+- Cálculos concretos:
+  - **Pp/Ppk:** desviación global
+  - **Cp/Cpk:** desviación dentro de subgrupos (método √(Σ dev²/Σ(n-1)))
+  - **Cm/Cmk:** para análisis de máquina
+- Validación de datos (mínimo 2 mediciones, límites válidos)
+- Exportación a CSV
+- Visualización de métricas
+
+**QCS-1.0:** ❌ **SOLO INTERFAZ**
+- Stat-card con `--` (sin cálculos)
+- Botón `onclick="alert('Nuevo análisis')"`
+- NO HAY CÓDIGO NUMÉRICO
+
+---
+
+### Proyectos de Calidad (8D, acciones correctivas)
+
+**QMS-0.1:** ✅ **COMPLETAMENTE FUNCIONAL**
+```javascript
+const modules = {
+  projects: {
+    title: 'Proyectos de calidad',
+    fields: [
+      ['title', 'Nombre del proyecto', 'text', true],
+      ['owner', 'Responsable'],
+      ['due', 'Fecha objetivo', 'date'],
+      ['status', 'Estado', 'select:Planificado,En curso,Bloqueado,Finalizado'],
+      ['objective', 'Objetivo', 'textarea'],
+      ['action', 'Acciones y seguimiento', 'textarea']
+    ]
+  }
+}
+```
+- CRUD completo
+- Gestión de responsables
+- Timeline por fecha objetivo
+- Exportación CSV
+- Persistencia
+
+**QCS-1.0:** ❌ **SOLO INTERFAZ**
+- Botón `onclick="alert('Nuevo proyecto')"`
+- NO HAY FUNCIONALIDAD
+
+---
+
+## 4. EXPORTACIÓN Y FORMATO DE DATOS
+
+### QMS-0.1
+**Formatos soportados:**
+- ✅ JSON (backup completo con versión, timestamp, todos los módulos)
+- ✅ CSV (por módulo: NC, Homolog, Reports, Projects)
+- ✅ Excel/XLSX (CodeMatch: importación + exportación con JSZip)
+- ❌ PDF directamente desde QMS (pero CodeMatch maneja PDF de planos)
+- ✅ Almacenamiento IndexedDB (CodeMatch) + localStorage (QMS)
+
+### QCS-1.0
+**Formatos soportados:**
+- ❌ Ninguno implementado (solo HTML/CSS)
+
+---
+
+## 5. ALMACENAMIENTO Y COMPATIBILIDAD
+
+### QMS-0.1
+**IndexedDB (CodeMatch):**
+- records (keyPath: code)
+- attachments (recordCode index)
+- patterns (keyPath: id)
+- arucoTests (keyPath: id)
+- technicalRuns (createdAt, method indices)
+- recordHistory (recordCode index)
+- settings (keyPath: key)
+- DB_VERSION = 4
+
+**localStorage (QMS):**
+- qms.records.v1 (JSON serializado)
+- codematch-web-pin-v1 (PIN SHA-256)
+- codematch-theme-v1 (tema actual)
+- codematch-custom-theme-v1 (tema personalizado)
+- selectedApp (última app abierta)
+
+**Compatibilidad de datos:**
+- Schema CodeMatch: v0.1-experimental
+- QMS Backup format: {format: 'qms-backup', version: 1, data: {...}}
+- MIGRACIÓN: Nativa en qms.js (verifica versión, estructura, tipos)
+
+### QCS-1.0
+**Almacenamiento:**
+- localStorage.setItem('selectedApp', app) - SOLO línea de código presente
+- Ningun otra persistencia implementada
+
+---
+
+## 6. ESTADO DE CADA MÓDULO
+
+| Módulo | QMS-0.1 | QCS-1.0 | Evidencia |
+|--------|---------|---------|-----------|
+| **CodeMatch v2.9.0** | ✅ Funcional | ❌ UI stub | /www/codematch/app.js (1000+ líneas) vs onclick="alert" |
+| **No Conformidades** | ✅ Funcional | ❌ UI stub | modules.nc en qms.js vs onclick="alert" |
+| **Homologaciones** | ✅ Funcional | ❌ UI stub | modules.homolog en qms.js vs onclick="alert" |
+| **Informes/Cpk** | ✅ Funcional | ❌ UI stub | functions stats/withinStats/machineStats vs alert |
+| **Proyectos** | ✅ Funcional | ❌ UI stub | modules.projects en qms.js vs alert |
+
+---
+
+## 7. CARACTERÍSTICAS ESPECÍFICAS DE CODEMATCH
+
+### Búsqueda por Dimensiones (QMS-0.1)
+- **Desarrollado/Plegado:** COMBINABLES (campos independientes)
+  - `developedLength`, `developedWidth` (diseño extendido)
+  - `foldedLength`, `foldedWidth`, `foldedHeight` (diseño doblado)
+  - Búsqueda: `#searchLength` y `#searchWidth`
+- **Función dimsMatch:**
+  ```javascript
+  dimsMatch(a, b, x, y, tol)
+  // Compara pares de dimensiones
+  // - direct: a~=x AND b~=y
+  // - swapped: b~=x AND a~=y
+  // Retorna {ok, distance, swapped}
+  ```
+
+### Sumatorio de Cotas (QMS-0.1)
+- **Estructura:** `foldCotas[foldCalcTarget]` = array de 3 elementos
+  ```javascript
+  foldCotas.searchLength = ['', '', '']
+  foldCotas.searchWidth = ['', '', '']
+  ```
+- **UI:** Dialog #foldCalcDialog con
+  - Botón "Cota 1", "Cota 2", "Cota 3"
+  - Inputs numéricos step="0.1"
+  - Botón "+ Añadir cota" (expande del 3)
+  - Botón "Limpiar cotas"
+  - Total mostrado en tiempo real
+- **Exactitud:** Array DINÁMICO (`.push(''), .splice(index, 1)`) - NO limitado a 2x4 en código
+
+### Medición por Planos (QMS-0.1)
+- **3 vistas:** Planta (0), Alzado/Lateral (1), Isométrica/Oblicua (2)
+- **Estructura queryViews[slot]:**
+  ```javascript
+  {
+    file: File,
+    thumb: DataURL,
+    feature: descriptor,
+    arucoDetected: bool,
+    planeCalibrated: bool,
+    planeCalibration: {markerId, homography, markerSizeMm, sourceWidth, sourceHeight},
+    estimated: {length, width},
+    measurementSource: 'manual' | 'confirmed' | 'automatic',
+    manualDimensions: {...}
+  }
+  ```
+- **Medidas finales combinadas:**
+  - Largo: Planta.length
+  - Ancho: Planta.width
+  - Alto: Alzado.width (como altura)
+
+### Importación/Exportación Excel (QMS-0.1)
+- **Entrada:** .xlsx o .csv
+- **Mapeo dinámico:** Usuario selecciona columnas (código, denominación, largo, ancho)
+- **Función parseSpreadsheet:**
+  - Lee xl/sharedStrings.xml (strings)
+  - Lee xl/workbook.xml
+  - Parse xl/worksheets/sheet1.xml
+  - Crea matriz de celdas
+- **Salida:** Importa a IndexedDB records con source='excel', dataSource='Excel'
+- **Exportación:** genera XLSX con estructura completa usando JSZip
+
+---
+
+## 8. DIFERENCIAS CLAVE ENTRE AMBAS VERSIONES
+
+### Tamaño
+- QMS-0.1: 617 KB (más pesado = incluye código funcional)
+- QCS-1.0: 341 KB (más ligero = solo UI sin lógica)
+
+### Capacidad de compilación
+- QMS-0.1: ❌ NO tiene configuración Android (gradlew, local.properties, etc.)
+- QCS-1.0: ✅ SÍ tiene Gradle 8.2.1 + build.gradle + gradlew + variables.gradle + .gitignore
+
+### Documentación
+- QMS-0.1: ❌ NO README
+- QCS-1.0: ✅ SÍ README completo con pasos de compilación, JDK 11 requisito, troubleshooting
+
+### Launcher
+- QMS-0.1: Simple, Link a codematch/ + 4 cards a hash (#nc, #homolog, #reports, #projects)
+- QCS-1.0: Moderno, Gradient, Logo SVG, versiones de módulos mostradas, Grid 2x2+full
+
+### Plugins Capacitor
+- QMS-0.1: core + android solamente
+- QCS-1.0: core + android + app + splash-screen (mejor integración nativa)
+
+---
+
+## 9. RECOMENDACIÓN FINAL
+
+### ✅ USA QCS-v1.0-FIXED COMO BASE PORQUE:
+1. **Compilable:** Incluye configuración Android completa (gradlew, gradle, local.properties, build.gradle)
+2. **Documentada:** README con pasos claros, requisitos (JDK 11), troubleshooting
+3. **Moderna:** Usa Gradle 8.2.1 (QMS usa referencias implícitas), SplashScreen, Better Capacitor integration
+4. **Interfaz superior:** UI más pulida, launcher con gradient, versionado de módulos visible
+5. **Extensible:** Estructura clara para añadir módulos funcionales
+
+### ⚠️ RECUPERA DE QMS-0.1-proyecto:
+1. **/www/codematch/** - TODO EL DIRECTORIO
+   - app.js (lógica funcional completa)
+   - core/ (schema, evidencia, candidatos, fusión)
+   - vendor/ (pdf.js, jszip)
+   - aruco.js, contour.js, edge-consensus.js, method-consensus.js
+   - demo-catalog.js, guided-segmentation.js
+   - styles.css, index.html, manifest.webmanifest
+
+2. **/www/qms.js** - Lógica de NC, Homolog, Reports, Proyectos
+   - modules definition (NC, Homolog, Reports, Projects)
+   - stats(), withinStats(), machineStats() para Cpk
+   - CRUD functions (home, list, edit)
+   - CSV export, backup/restore
+
+3. **Solo referencia, NO copiar:**
+   - qms.css (usar estilos modernos de QCS)
+   - /www/index.html viejo (usar launcher moderno de QCS)
+
+### 🔨 PLAN DE MIGRACIÓN:
+1. **Base:** QCS-v1.0-FIXED (compilable, documentada)
+2. **Reemplazar:** /www/codematch/ con la versión funcional de QMS-0.1
+3. **Integrar:** qms.js (lógica NC/Homolog/Reports/Projects) en www/index.html como módulos JavaScript
+4. **Actualizar:** Launcher de QCS para que NO sea hardcoded, sino que llame a funciones reales
+5. **Mantener:** android/ config de QCS-1.0 (ya está optimizada)
+6. **Resultado:** QCS-v1.0 compilable + todos los módulos funcionales
+
+---
+
+## 10. BLOQUEANTES IDENTIFICADOS
+
+### Críticos:
+- ❌ QCS-1.0 no tiene lógica JavaScript de módulos (solo UI)
+- ❌ QMS-0.1 no tiene configuración Android (no compila)
+
+### Moderados:
+- ⚠️ Integración de CodeMatch en launcher QCS requiere cargar app.js dinamicamente
+- ⚠️ IndexedDB de CodeMatch vs localStorage de QMS - decidir storage unificado
+
+### Menores:
+- ℹ️ Temas de Capacitor splash-screen
+- ℹ️ Rutas de módulos en index.html vs separadas

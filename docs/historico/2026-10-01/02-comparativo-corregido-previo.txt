@@ -1,0 +1,168 @@
+# COMPARATIVO ZIPs v2 — CORREGIDO
+## Quality Control Suite — Auditoría de lectura
+
+**Fecha:** 2026-10-01
+**Autor:** Claude
+**Alcance:** Solo lectura. No se ha modificado código, ni sustituido ZIPs, ni tocado CI.
+**Supersede a:** `ANALISIS_ZIPS_COMPARATIVO.md` y `EVIDENCIA_RUTAS_ARCHIVOS.md` (contenían errores corregidos aquí).
+
+---
+
+## 0. IDENTIFICACIÓN DE LO AUDITADO
+
+| Elemento | Identificador |
+|---|---|
+| Repositorio | ICodeMatch/QCS-v1.0 |
+| Commit auditado (HEAD) | `1ed217011e242442f345de68a4a6318e06163060` |
+| QMS-0.1-proyecto.zip — git blob SHA | `5e14d1fdfa5a91f6316d88eda91a818016fdc7c6` |
+| QMS-0.1-proyecto.zip — SHA256 | `4a24214de8babc94f307969a8b87f602dfb891ac76a836bc991c386fe8089336` |
+| QCS-v1.0-FIXED.zip — git blob SHA | `055fc11956885d9d9e4d8f12479acdaa1d481772` |
+| QCS-v1.0-FIXED.zip — SHA256 | `b96d5aa3c0501991f211395d44948e7e5c829bcb95ab8ba79bf2bb672e78aaa6` |
+| Workflow auditado | `.github/workflows/build.yml`, blob `69f8ed68c0581ac56ebae6e5574546b8dfaa419c` |
+
+---
+
+## 1. ADVERTENCIA METODOLÓGICA
+
+**Nada de lo que sigue está PROBADO. Todo está INSPECCIONADO.**
+
+- He leído el código fuente de ambos ZIPs tras extraerlos.
+- **No he ejecutado la aplicación.**
+- **No he ejecutado ninguna compilación.**
+- **No he consultado el historial de ejecuciones de GitHub Actions**, por lo que no sé si el workflow termina con éxito.
+
+Cuando abajo digo "funciona", debe leerse como "existe código que implementa esa función y he leído su lógica". No equivale a comportamiento validado.
+
+---
+
+## 2. CORRECCIONES A MI INFORME ANTERIOR
+
+| Afirmación anterior (errónea) | Corrección verificada |
+|---|---|
+| "QMS-0.1 NO COMPILABLE: sin configuración Android" | **Falso.** El workflow ejecuta `npx cap add android`, que genera el proyecto nativo en tiempo de compilación. No incluir `android/` en el ZIP no impide compilar. |
+| "QCS-FIXED COMPILABLE: Gradle 8.2.1, gradlew" | **No acreditado.** Contiene `android/` con Gradle y `gradlew`, pero ningún workflow lo compila. Nunca ha pasado por CI. Tener los ficheros no demuestra que compile. |
+| "QMS-0.1: 100% FUNCIONAL, todos los módulos" | **Exagerado.** Hay CRUD y cálculos reales, pero ningún módulo cubre los requisitos acordados (ver tabla §3). |
+| "Importación/exportación Excel y PDF" | **Mezcla dos cosas.** Excel sí (`exportExcel`). **PDF de informes NO existe.** |
+| "CodeMatch: sumatorio de 8 celdas 2×4" | **Falso.** Son 3 celdas iniciales por destino, ampliables sin límite. |
+| "Búsqueda desarrollo y plegada combinables" | **Falso.** El filtro es excluyente (XOR). |
+| "Android de QCS ya optimizada" | **Sin base.** No hay prueba alguna. Retiro la afirmación. |
+| "Fusión en 2-3 horas" | **Sin base.** Retiro la estimación. |
+
+---
+
+## 3. TABLA DE FUNCIONALIDAD (formato solicitado)
+
+Leyenda estado: **I** = inspeccionado (código leído) · **P** = probado (ejecutado) · nada está en P.
+
+### 3.1 CodeMatch
+
+| Funcionalidad | Archivo y función | Estado | Requisito cubierto | Carencias |
+|---|---|---|---|---|
+| Sumatorio de cotas | `www/codematch/app.js:21` `foldCotas={searchLength:['','',''],searchWidth:['','','']}` · `:87 foldTotal()` reduce · `:89 addCotaBtn` push · `:88 removeCota` splice | I | **NO** | Requisito: 8 celdas fijas, 2 col × 4 filas, vacías ignoradas. Real: 3 celdas iniciales por destino, añadibles/borrables sin límite. Estructura distinta. |
+| Aplicar total a largo/ancho | `app.js:91 applyCotasBtn` → `$('#'+foldCalcTarget).value` | I | **SÍ (parcial)** | Aplica al destino elegido, correcto. Pero fuerza `measureMode='developed'` tras aplicar. |
+| Búsqueda desarrollo + plegada | `app.js:189 runSearch()` → `const mode=$('#measureMode').value` · `const a = mode==='folded' ? r.foldedLength : r.developedLength` | I | **NO** | Selector **excluyente** (XOR). Requisito pide combinables y con datos parciales de cualquiera o ambos. Ambos valores se almacenan en BD, pero el filtro solo consulta uno. |
+| Sin descuentos de plegado | `app.js:87` suma aritmética simple; aviso en `index.html:120` | I | **SÍ** | Cumple: suma sin descuentos, con advertencia al usuario. |
+| Tolerancia y búsqueda 2D | `app.js:189` `dimsMatch(a,b,x,y,tol)`, `tol` por defecto 5 mm | I | SÍ | — |
+| Importación/exportación Excel | `app.js:205` XLSX · `:294,:306 exportExcel` | I | SÍ | No verificado el formato contra plantilla real. |
+| Consulta de planos PDF | `app.js:239 pdfThumbnail()` (PDF.js) · `:245 openAttachment()` | I | SÍ | Solo **lectura**. |
+| **Generación de informes PDF** | **No existe** | I | **NO** | Búsqueda de `jsPDF`, `jspdf`, `window.print`, `generatePDF`, `exportPDF`, `toPDF` en todo `www/`: **0 coincidencias**. PDF.js es librería de lectura. |
+| Copias de seguridad | `app.js:311 exportBackup` / `importBackup`, `{version:2}` con validación | I | SÍ | Versionado de backup real. |
+| Esquema de datos versionado | `app.js:10` `DB_VERSION=4` + `onupgradeneeded` | I | SÍ | IndexedDB con migraciones. Distinto de backup. |
+| **Retirar fotos/cámara/experimental** | 11 coincidencias en `app.js`, 9 en `index.html` (`getUserMedia`, `camera`, `hybrid-lab`, `experimental`) | I | **PENDIENTE** | Requisito: eliminar **solo** de CodeMatch. Es trabajo de edición, no una copia directa. `hybrid-lab.js`, `guided-segmentation.js`, `aruco.js` están acoplados a esa vía. |
+
+### 3.2 Módulos QMS (`www/qms.js`)
+
+| Funcionalidad | Archivo y función | Estado | Requisito cubierto | Carencias |
+|---|---|---|---|---|
+| Avisos / No Conformidades | `qms.js` `modules.nc` (10 campos) · `edit()`, `list()`, filtro por `JSON.stringify().includes()` · export CSV · `localStorage` | I | **NO** | Tiene: origen interna/cliente/proveedor, responsable, estado, causa, acción, verificación. **Falta:** denominación, cantidad, acción inmediata, fotos múltiples, comentario por foto, informes PDF/Excel/Word con evidencias, monitor con filtros por código/proveedor/fechas/estados, KPIs, gráficos, numeración, ciclo de estados, vínculo con proyectos, SharePoint. |
+| Homologaciones | `qms.js` `modules.homolog` (8 campos) · mismo CRUD | I | **NO** | Tiene: pieza, proveedor, estado, requisitos en texto libre. **Falta todo lo sustantivo:** importar plantilla Excel, detección de cotas y límites, fallback de mapeo hoja/filas/columnas, vista previa, configuración reutilizable, atributos OK/NOK, nominal+tolerancias, resistencias con tolerancia %, medición guiada secuencial o libre, saltar/retomar/corregir, distinguir pendientes, preservar Excel original, monitor. |
+| Capacidad (Cp/Cpk/Pp/Ppk/Cm/Cmk) | `qms.js` `stats()` (Pp/Ppk, sd muestral n−1) · `withinStats()` (Cp/Cpk, sd agrupada intra-subgrupo) · `machineStats()` (Cm=Pp, Cmk=Ppk) | I | **PARCIAL** | **Cumple lo más difícil:** separa correctamente variación intra-subgrupo de desviación global; valida mínimo 2 mediciones y límites coherentes. **Falta:** gráficos, históricos, comparativas, criterios de aceptación configurables, documentación del método, exportación PDF/Excel/Word, validación contra datos de referencia. `Cm=Pp` y `Cmk=Ppk` es una equivalencia que conviene revisar. |
+| Proyectos | `qms.js` `modules.projects` (6 campos) · CRUD · orden por fecha | I | **NO** | Tiene: nombre, responsable, fecha, estado, objetivo, acciones en texto. **Falta:** PDCA, 8D con sus disciplinas, análisis de causa raíz, FAC como registro propio, tareas con responsables y estados, tablero, calendario, equipo, permisos ver/editar/administrar, evidencias, vínculo con Avisos/Homologaciones/Estudios. |
+| Persistencia | `qms.js` `KEY='qms.records.v1'`, `localStorage` | I | PARCIAL | Backup con `{format:'qms-backup', version:1}` y validación. Sin migraciones de esquema (a diferencia de CodeMatch). |
+
+### 3.3 QCS-v1.0-FIXED
+
+| Funcionalidad | Archivo y función | Estado | Requisito cubierto | Carencias |
+|---|---|---|---|---|
+| Launcher / diseño | `www/index.html`, 293 líneas | I | Diseño sí | Estética moderna, 5 tarjetas. Es lo único aprovechable. |
+| Lógica de módulos | **No existe** | I | **NO** | `find www -name "*.js"` → **0 ficheros**. 8 × `onclick="alert(...)"`. Los contadores son literales (`id="ncCount">0`, `id="cpkValue">--`). |
+| CodeMatch | **No existe** | I | **NO** | Ausente por completo. |
+| Configuración Android | `android/` con `build.gradle`, `variables.gradle`, `gradlew`, wrapper | I | Sin acreditar | Existe, nunca ejecutado en CI. |
+| `capacitor.config.json` | `appId=com.qualitycontrol.suite`, `appName="Quality Control Suite"`, plugin SplashScreen | I | SÍ (nombre) | appId **idéntico** al de QMS → no rompe actualizaciones entre ambos. |
+| README | `README.md`, líneas 14-19 | I | — | **Exige JDK 11 y prohíbe JDK 17+.** Contradice el CI auditado, que usa Java 17. Nadie lo ha puesto a prueba. |
+
+---
+
+## 4. CONTRADICCIÓN JAVA — SIN RESOLVER
+
+| Fuente | Dice |
+|---|---|
+| `.github/workflows/build.yml` | `java-version: '17'` (Temurin) |
+| `QCS-Final/README.md:14-15` | `❌ EVITAR: JDK 8, JDK 17+` · `✅ USAR: JDK 11 específicamente` |
+
+`build.gradle` y `variables.gradle` de QCS no fijan `sourceCompatibility`, por lo que heredan del JDK del entorno.
+
+**No puedo resolverlo sin ejecutar ambas compilaciones.** No afirmo que Java 17 funcione con QCS ni que el README esté equivocado. Es una discrepancia que debe cerrarse probando, no leyendo.
+
+---
+
+## 5. QUÉ CONSERVAR DE CADA ZIP
+
+### De QMS-0.1 (base propuesta)
+- Todo `www/codematch/` — es el único código con valor real, **pero requiere edición previa** para retirar fotos, cámara y experimental.
+- `www/qms.js` — los cálculos de capacidad (`stats`, `withinStats`, `machineStats`) son lo mejor del repositorio y merecen conservarse casi tal cual.
+- El workflow `build.yml` — es la única vía de compilación ejercitada.
+- El versionado IndexedDB (`DB_VERSION`, `onupgradeneeded`) como patrón a extender al resto de módulos.
+
+### De QCS-v1.0-FIXED
+- El diseño del launcher y la hoja de estilos (azul oscuro / verde azulado / tarjetas blancas).
+- `capacitor.config.json`: `appName` correcto y plugin SplashScreen.
+- El README como **plantilla de estructura**, corrigiendo el requisito de Java una vez probado.
+- `android/` únicamente como **referencia** de versiones fijadas, no como sustituto de `cap add android`.
+
+### De ninguno de los dos
+No existe hoy, en ningún ZIP: generación de informes PDF, monitor con filtros y gráficos, parser de plantilla Excel de homologaciones, medición guiada, FAC, calendario, permisos, ni integración SharePoint. Son desarrollo nuevo, no recuperación.
+
+---
+
+## 6. RECOMENDACIÓN
+
+**Acepto la recomendación provisional de ChatGPT y retiro la mía anterior.**
+
+Base: **QMS-0.1**, por ser la referencia funcional y la única con vía de compilación ejercitada. De QCS-FIXED se recupera diseño y configuración, que es barato de reaplicar; lo contrario —portar 1000+ líneas de lógica a un armazón vacío— es caro y arriesgado sin ganancia demostrada.
+
+**Condición previa:** verificar en GitHub Actions que la última ejecución del workflow terminó con éxito. Si falla, la premisa cae y hay que reevaluar.
+
+**Sin plazos.** No estimo duración hasta tener plantilla FAC, Excel de homologaciones y resultado de las compilaciones.
+
+---
+
+## 7. BLOQUEANTES Y DEPENDENCIAS
+
+### Técnicos, resolubles por nosotros
+1. Sumatorio de cotas: rehacer a 8 celdas fijas 2×4 con vacías ignoradas.
+2. Búsqueda desarrollo/plegada: rediseñar el filtro para admitir ambos y datos parciales.
+3. Retirar fotos/cámara/experimental solo de CodeMatch sin romper el resto.
+4. Unificar almacenamiento (IndexedDB en CodeMatch frente a localStorage en QMS).
+5. Cerrar la discrepancia Java 11 / 17 ejecutando ambas compilaciones.
+6. Comprobar firma y appId de la APK instalada antes de preparar actualizaciones.
+
+### Dependientes del usuario
+7. Plantilla FAC empresarial con campos y aprobaciones.
+8. Excel original de medición dimensional para validar el parser.
+9. Datos de referencia para validar los cálculos de capacidad.
+
+### Dependientes de IT
+10. Acceso móvil real a SharePoint con identidad y permisos.
+11. Licencias y coste de Copilot 365, si se confirma esa vía.
+12. Política de firma de APK y distribución.
+
+---
+
+## RESUMEN
+
+Mi informe anterior sobrevaloró ambos ZIPs y ChatGPT acertó al rechazarlo. Verificado el código: QMS-0.1 contiene toda la lógica existente, pero **ningún módulo cumple los requisitos acordados**; lo que hay es una base de CRUD y unos cálculos de capacidad correctos. QCS-v1.0-FIXED no contiene lógica alguna: cero ficheros JavaScript y ocho botones que solo lanzan `alert`.
+
+Tres requisitos de CodeMatch están **incumplidos en el código actual** y no son matices: el sumatorio son 3 celdas dinámicas en lugar de 8 fijas, la búsqueda por desarrollo y plegada es excluyente en lugar de combinable, y no existe generación de informes PDF en ninguna parte del repositorio.
+
+La base debe ser QMS-0.1, condicionada a comprobar que su compilación en CI termina con éxito. Nada está probado: todo lo anterior procede de leer el código, no de ejecutarlo.

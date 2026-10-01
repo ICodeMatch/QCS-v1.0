@@ -3,7 +3,12 @@ Actualizado 2026-10-01 tras recepción del paquete P1 por ChatGPT. Se archiva do
 Repositorio: https://github.com/ICodeMatch/QCS-v1.0
 Hilo central: https://github.com/ICodeMatch/QCS-v1.0/issues/1
 
-## Actualización vigente: B2 v1.1 y B4 consolidados por ChatGPT
+## Actualización vigente: B3 Homologaciones revisado
+[15 — B3 y correcciones incorporadas](historico/2026-10-01/15-b3-homologaciones-corregido.md): registro normalizado del documento recibido, no copia literal/anexo. Conservar original/estructura variable y separar conformidad/completitud/aprobación; proveedores en alcance.
+Correcciones: vacío=0 solo perfil explícito; fórmula ausente no invalida por sí sola; ranura no acredita pieza; evaluación/aprobación ligadas a revisión; destinos A/B/C precisados; hash archivo distinto de firma estructural; monitor HOM-M1 ocho registros, no seis; avisos A4/A5 y recorrido/reanudación precisados.
+16 casos nuevos,150hipotéticos no aprobados ni ejecutados. B0/B7a siguen pendientes de ChatGPT. No reemitir bloque completo por correcciones incorporables.
+
+## Actualización anterior: B2 v1.1 y B4 consolidados por ChatGPT
 [14 — Consolidación corregida B2/B4](historico/2026-10-01/14-consolidacion-b2-b4-corregida.md) recoge ambas entregas posteriores a P1 e incorpora directamente las correcciones. Registro normalizado, no transcripción literal; mensajes originales y anexos completos están en el chat fuente.
 B2: tres estados de evaluación propuestos, T-CM-10 padre/subcasos, 14 nuevos/118 hipotéticos. Frecuencias de extremos contrastadas por ChatGPT en JavaScript fuera de QCS, coincidencia con Claude; no prueba funcional.
 B4: 16 nuevos/134 hipotéticos. Correcciones vigentes: updatedAt NO es fecha de registro; preservar borrador antes de cámara y validar recuperación real; XLSX texto tipado separado de CSV fiel/protegido; copia para todo borrado sigue propuesta.

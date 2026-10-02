@@ -1,4 +1,4 @@
-name: QMS Android prueba
+name: Build QCS APK
 
 on:
   workflow_dispatch:
@@ -13,63 +13,46 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Descargar repositorio
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Descomprimir QMS
+      - name: Unzip QCS
         run: |
-          test -f QMS-0.1-proyecto.zip
-          unzip -q QMS-0.1-proyecto.zip -d qms-source
-          test -f qms-source/QMS/package.json
+          unzip -q QCS-v1.0-FIXED.zip -d qcs-source
+          cp -r qcs-source/QCS-Final/* .
+          rm -rf qcs-source
 
-      - name: Preparar Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Preparar Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Preparar SDK Android
+      - name: Setup Android
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools'
 
-      - name: Preparar proyecto Android
-        working-directory: qms-source/QMS
+      - name: Install & Build
         run: |
           npm install
           npx cap add android
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path('android/app/src/main/AndroidManifest.xml')
-          s = p.read_text()
-          s = s.replace('@mipmap/ic_launcher_round', '@drawable/qms_icon')
-          s = s.replace('@mipmap/ic_launcher', '@drawable/qms_icon')
-          s = s.replace(
-              '<application',
-              '<uses-permission android:name="android.permission.CAMERA"/><application',
-              1
-          )
-          p.write_text(s)
-          PY
-          mkdir -p android/app/src/main/res/drawable
-          cp native-assets/qms_icon.xml android/app/src/main/res/drawable/qms_icon.xml
           npx cap sync android
 
-      - name: Compilar APK de prueba
-        working-directory: qms-source/QMS/android
+      - name: Compile APK
+        working-directory: android
         run: |
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease
 
-      - name: Guardar APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: QMS-0.1-APK-PRUEBA
-          path: qms-source/QMS/android/app/build/outputs/apk/debug/*.apk
+          name: QCS-v1.0-release
+          path: android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error

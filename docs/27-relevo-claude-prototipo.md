@@ -1,3 +1,11 @@
+> **Punto de pausa actualizado: 2026-10-02 11:06 Europe/Madrid.** El usuario decidió que NO hace falta activar relevo a Claude: ChatGPT continúa tras el restablecimiento de cupo. No hay encargo activo de implementación a Claude. Se pausa para conservar trabajo.
+>
+> Run 36987305322 correcto. APK final de código 3929d5a descargada, integridad y firma presentes verificadas, guardada para el usuario como QCS-Prueba-0.1.1.apk (6.896.906 bytes). Nombre QCS Prueba, appId com.qualitycontrol.suite.stage1. Capturas finales de acceso, Inicio, CodeMatch y sumatorio inspeccionadas: tarjetas compactas, medidas en paralelo, ocho celdas en 2 columnas x 4 filas, logo y fondo incluidos. Inspección web no sustituye prueba OPPO.
+>
+> Siguiente paso: instalar y probar en OPPO, sin desinstalar la app habitual. Si al actualizar la anterior QCS Prueba existe conflicto de firma, NO recomendar desinstalación con datos sin copia y revisión. Recuperación de contraseña, Recordarme, migración v1/v2 y demás módulos pendientes. No dar por aprobados los 13 recorridos.
+>
+> El contenido inferior conserva el historial del relevo preparado, pero su instrucción de traspaso queda inactiva.
+
 # Relevo a Claude — QCS Prueba
 Fecha: 2026-10-02, 11:01 Europe/Madrid. Autoridad: usuario.
 

@@ -33,3 +33,9 @@ El resumen consolidado en `/projects/...` no está accesible desde el entorno de
 Mantener separado el contador de muestras numéricamente válidas del de conformes; no excluir datos fuera de tolerancia del cálculo de capacidad. P5 y D16 permanecen abiertos. Reconocimiento de atributos sensible a mayúsculas es propuesta; A6 es aviso heurístico de posible ruido, no autorización para redondear datos legítimos; A1 conserva signos; T-HOM-34 representa una homologación de 30 características.
 
 B2 actual conserva las decisiones ya implementadas y comparaciones decimales; el ensayo genérico IEEE-754 de Claude no demuestra fallo de la app. Cotejar P7 contra el código vigente antes de pedir decisiones duplicadas. No se modifica B2/B5 en este avance.
+
+## Condición SharePoint añadida por el usuario
+
+Confirmado el 2 de octubre: actualmente el móvil solo podrá conectarse a SharePoint desde la red de la empresa; con la SIM no. Fuera de esa red QCS conserva datos e informes localmente. B7b debe verificar acceso al destino real mediante la configuración empresarial; no aceptar cualquier Wi-Fi como prueba de acceso. La condición queda registrada para la integración futura: este avance no activa SharePoint ni demuestra conectividad empresarial.
+
+El usuario confirma que se necesita la seguridad empresarial aplicable, además de la restricción de red. La futura integración debe respetar autenticación, permisos y políticas de la empresa; no dar acceso por el solo hecho de estar en su red. No publicar ni incrustar credenciales empresariales en código, informes o registros de diagnóstico. El acceso local de QCS Prueba sigue siendo provisional, no identidad empresarial. La configuración y pruebas con cuentas, destino y políticas reales son necesarias antes de declarar validada la integración. No se eligen ahora roles, un método concreto de autenticación o excepciones a políticas que no se han recibido.

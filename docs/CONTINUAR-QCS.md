@@ -1,31 +1,27 @@
-# CONTINUAR QCS — resumen público
-Actualizado 2026-10-02 por ChatGPT. Este resumen sustituye el punto de entrada anterior para limitar su contenido a requisitos, entregas y tareas generales. No certifica revisión de todo el histórico público.
+# CONTINUAR QCS
 
-## Alcance autorizado
-Documentación, planificación y auditoría en lectura. Sin implementación, cambios de ZIP/CI, merges ni cierre de Issue. Usuario decide requisitos. Defaults D1–D25 siguen propuestas. Ningún caso se ha ejecutado contra QCS.
+Actualizado por ChatGPT el 2 de octubre de 2026.
 
-## Requisitos vigentes
-Quality Control Suite para Android. Inicio: Avisos/No Conformidades, Homologaciones, Informes de calidad, Mejora y resolución de problemas, CodeMatch al final. Acceso global e identidad QCS.
-CodeMatch: búsqueda por medidas, desarrollo/plegada combinables, catálogo y planos, sumatorio ocho celdas 2×4 desde pieza plegada para estimar desarrollo. Biblioteca con varias fotos de referencia desde cámara/galería, reducidas/comprimidas, sin análisis automático; preservar fotos existentes.
-Avisos: categorías interna/proveedor/cliente, datos, fotos/comentarios, borradores, informes e histórico/monitor.
-Homologaciones piezas/proveedores en alcance, Excel original conservado, estructura variable por plantilla, medición guiada/libre y separación conformidad/completitud/aprobación.
-Capacidad Cp/Cpk,Pp/Ppk,Cm/Cmk, métodos visibles, importación y validación independiente.
-Mejora PDCA/8D, causa raíz verificada, acciones/calendario/equipo/vínculos; FAC como propuesta propia, no procedimiento aprobado.
-SharePoint y permisos requieren configuración y prueba real. No contratar servicios adicionales.
+## Punto de entrada vigente
 
-## Validaciones independientes nuevas
-[20 — CAP-S2](20-validacion-capacidad-cap-s2.md) y [21 — CAP-S3](21-validacion-capacidad-cap-s3.md): esperados ejecutados fuera de QCS, datos sintéticos; no prueba del motor/app. Cubren global/agrupada, subgrupos variables/singletons/constantes y criterio aplicado antes de redondear. B5 completo aún no recibido en chat; últimas entregas generales fueron cabeceras, no cuerpos.
+La implementación está en la rama `implementacion/etapa1-qcs`, directorio `app/`. No continuar desde los ZIP antiguos de `main`. El usuario autorizó el prototipo y sus correcciones: el alcance exclusivamente documental de los informes históricos ya no describe el trabajo de ChatGPT.
 
-## Entregas generales
-- [Contratos comunes v0.1](16-contratos-b0-b7a-v0.1.md), propuestas documentales.
-- [Ajustes v0.2 y B6](18-contratos-v0.2-y-b6-revisado.md).
-- [Contratos parser, decimal y Capacidad](19-contratos-parser-decimal-capacidad-v0.1.md).
-B1/B2/B3/B4/B6 recibidos y revisados como documentos; no implementados. 173 casos hipotéticos, pendientes de aceptación y ejecución.
+Versión de prueba en preparación: QCS Prueba CodeMatch 0.1.4. Acceso QCS antes del Inicio; contraseña mínima ocho caracteres; mismo identificador y firma de entrega que 0.1.3. Recuperación y Recordarme pendientes. No desinstalar para actualizar; hacer copia previa.
 
-## Reparto siguiente
-ChatGPT: contratos técnicos, mapeo y validación independiente. Claude: B5 pantallas de Capacidad y revisión puntual de contratos, sin duplicar motores. Coordinación por copia/pega del usuario; no afirmar comunicación automática.
-Decisiones abiertas por módulo, no presentar todas como bloqueos. Conservar avances/documentos originales para continuidad en contexto privado.
+CodeMatch conserva el layout histórico aceptado, biblioteca, fotos de referencia múltiples reducidas sin análisis automático, Excel/CSV y planos. Desarrollo y plegada se muestran juntos y se combinan; sumatorio fijo ocho celdas 2×4, desde plegada aplica al largo o ancho del desarrollo elegido. Registros global es un apartado QCS pendiente, separado de Biblioteca. Icono QCS con letras/tic. Inicio: No conformidades, Homologaciones, Herramientas de calidad, Proyectos de calidad, CodeMatch.
 
-## Publicación y privacidad
-Usuario acordó que versiones públicas/ampliamente compartidas solo contengan requisitos y tareas generales. Detalles sensibles se mantienen en chat o material privado con acceso revisado. Informe detallado de revisión no publicado.
-Este resumen no elimina información de commits previos ni revisa todos los documentos antiguos. Revisión del histórico público pendiente; no afirmar saneamiento total del repositorio.
+## Continuación
+
+Primero validar la APK en el OPPO y corregir incidencias. Después Avisos como primer flujo completo (datos, fotos/comentarios, borradores, informe, consulta); luego Registros global, Homologaciones con plantillas reales, Herramientas de calidad y Proyectos. Mantener los diseños aprobados. SharePoint/identidad/permisos requieren configuración empresarial y pruebas reales; no contratar servicios adicionales ni simular subidas.
+
+ChatGPT mantiene implementación, servicios compartidos, conservación, pruebas y APK. Claude revisa contra B2/T-SUM/lista de aceptación, comprueba el cuerpo completo de B5 y completa solo lo pendiente, y revisa Avisos antes de implementarlo. B1/B2/B3/B4/B6 ya recibidos y revisados como documentos: reutilizarlos. D1–D25 no se convierten en requisitos sin decisión del usuario.
+
+Pruebas locales y de navegador no sustituyen móvil. Restauración antigua v1/v2 y conservación con copia real pendientes. No sustituir la app habitual antes de validar.
+
+Referencias: docs/16-contratos-b0-b7a-v0.1.md, docs/18-contratos-v0.2-y-b6-revisado.md, docs/19-contratos-parser-decimal-capacidad-v0.1.md, docs/20-validacion-capacidad-cap-s2.md, docs/21-validacion-capacidad-cap-s3.md y docs/29-restauracion-codematch.md. Informe de entrega actualizado: docs/30-entrega-qcs-0.1.4-y-continuacion.md.
+
+## Coordinación y privacidad
+
+El usuario traslada informes de Claude mientras no se verifique su escritura en GitHub. No afirmar vigilancia continua ni coordinación automática. Por tarea: propietario, rama, commit y pruebas; comprobar estado antes de editar. No tocar los ZIP/workflow de main ni trabajo ajeno, hacer merges o cerrar la Issue durante estas correcciones.
+
+No publicar claves de firma, credenciales, plantillas corporativas ni detalles sensibles de revisión. El histórico conserva documentos anteriores; este resumen no afirma que se haya saneado todo el repositorio.

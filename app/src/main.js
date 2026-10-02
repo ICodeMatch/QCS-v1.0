@@ -42,11 +42,30 @@ function run(fn) {
   queue = next;
   return next;
 }
+function icon(name) {
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${iconPaths[name] || ""}</svg>`;
+}
+const iconPaths = {"home":"<path d=\"m3 10 9-7 9 7\"/><path d=\"M5 9v12h5v-7h4v7h5V9\"/>","records":"<path d=\"M6 3h8l4 4v14H6z\"/><path d=\"M14 3v5h4M9 12h6M9 16h6\"/>","settings":"<path d=\"m10 3-.5 3-2 1-2.5-1-2 3 2 2v2l-2 2 2 3 2.5-1 2 1 .5 3h4l.5-3 2-1 2.5 1 2-3-2-2v-2l2-2-2-3-2.5 1-2-1-.5-3z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>","aviso":"<path d=\"m12 3 10 18H2z\"/><path d=\"M12 9v5M12 17v.1\"/>","people":"<circle cx=\"12\" cy=\"7\" r=\"3\"/><path d=\"M6 21v-3a6 6 0 0 1 12 0v3zM5 5a3 3 0 0 0 0 6M19 5a3 3 0 0 1 0 6M4 14a5 5 0 0 0-3 5v2h3M20 14a5 5 0 0 1 3 5v2h-3\"/>","chart":"<path d=\"M2 21h20M4 21V13h4v8M10 21V8h4v13M16 21V3h4v18\"/>","project":"<rect x=\"4\" y=\"2\" width=\"16\" height=\"20\" rx=\"2\"/><path d=\"M8 7h8M8 12h8M8 17h4\"/>","scan":"<path d=\"M2 7V3h4M18 3h4v4M22 17v4h-4M6 21H2v-4M6 8v8M10 8v8M14 8v8M18 8v8\"/>","chevron":"<path d=\"m9 5 7 7-7 7\"/>"};
 function setScreen(s) {
   clearTimeout(saveTimer);
   screen = s;
   $("#back").hidden = s === "login" || s === "home";
   $("#lock").hidden = s === "login";
+  document.body.dataset.screen = s;
+  const title = $(".brand-title");
+  if (title) title.textContent = s === "home" || s === "login" ? "Quality Control Suite" : s === "settings" ? "Ajustes" : "CodeMatch";
+  const nav = $("#bottomnav");
+  if (nav) {
+    nav.hidden = s === "login";
+    const active = s === "home" ? "home" : s === "settings" ? "settings" : "records";
+    nav.querySelectorAll("button").forEach(b => {
+      const selected = b.dataset.nav === active;
+      b.classList.toggle("active", selected);
+      if (selected) b.setAttribute("aria-current", "page");
+      else b.removeAttribute("aria-current");
+    });
+  }
+  if ($("#settingsTop")) $("#settingsTop").hidden = s === "login";
   window.scrollTo(0, 0);
 }
 async function refresh() {
@@ -58,7 +77,12 @@ function login() {
   setScreen("login");
   records = [];
   editing = null;
-  root.innerHTML = `<h1>Acceso QCS</h1><div class="card"><p>Acceso local provisional. No acredita identidad ni permisos de empresa.</p><p>Los nuevos datos se guardan cifrados en este dispositivo. La contraseña no se almacena.</p>${field("password", "Contraseña local (al crearla: mínimo 12 caracteres)", "", "password")}${button("enter", "Abrir", true)}<p>${button("forgot", "¿Has olvidado la contraseña?")}</p><small>Recuperación pendiente. No borraremos datos ni restableceremos la contraseña automáticamente.</small></div>`;
+  root.innerHTML = `<section class="login-panel"><img class="brand-mark brand-mark-large" src="assets/qcs-logo.svg" alt="Logo QCS"><h1>Quality Control Suite</h1><p class="login-subtitle">Gestión de la calidad</p><section class="login-form"><h2>Bienvenido</h2><label>Contraseña<div class="password-row"><input id="password" type="password" autocomplete="current-password"><button id="passwordEye" class="password-eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><small class="password-hint">Al crearla: mínimo 12 caracteres.</small><label class="remember"><input type="checkbox" disabled> Recordarme <span class="badge">Pendiente</span></label>${button("enter", "Entrar", true)}<p class="forgot-row">${button("forgot", "¿Has olvidado la contraseña?")}</p></section><p class="login-caption">Acceso a Quality Control Suite</p><details class="access-note"><summary>Acceso local provisional · QCS Prueba</summary><p>Los datos nuevos se guardan cifrados en este dispositivo. No acredita identidad ni permisos de empresa. Recuperación pendiente: conserva la contraseña; no existe restablecimiento automático.</p></details><small class="build-label">QCS Prueba · 0.1.1 · Diseño 02/10/2026</small></section>`;
+  $("#passwordEye").onclick = () => {
+    const p = $("#password");
+    p.type = p.type === "password" ? "text" : "password";
+    $("#passwordEye").setAttribute("aria-label", p.type === "password" ? "Mostrar contraseña" : "Ocultar contraseña");
+  };
   $("#enter").onclick = () =>
     run(async () => {
       await vault.unlock($("#password").value);
@@ -77,12 +101,24 @@ function login() {
 }
 function home() {
   setScreen("home");
-  root.innerHTML = `<h1>Quality Control Suite</h1><p class="muted">Primera etapa · Guardado en el dispositivo</p><div class="grid">${["Avisos", "Homologaciones", "Informes de calidad / Capacidad", "Mejora y resolución de problemas"].map((x) => `<section class="card"><h2>${x}</h2><span class="badge">Pendiente</span></section>`).join("")}<section class="card"><h2>CodeMatch</h2><p>Biblioteca de códigos y búsqueda por medidas.</p>${button("open", "Abrir CodeMatch", true)}</section></div><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión no modifica ni migra automáticamente datos de instalaciones anteriores. La recuperación de una copia antigua requiere contraste antes de instalar sobre la app habitual.</p>`;
+  const modules = [
+    ["aviso", "No conformidades", "Incidencias y acciones correctivas", "orange"],
+    ["people", "Homologaciones", "Piezas y proveedores", "blue"],
+    ["chart", "Informes de calidad", "Cp · Cpk · Pp · Ppk · Cm · Cmk", "teal"],
+    ["project", "Proyectos de calidad", "Acciones y seguimiento", "purple"],
+    ["scan", "CodeMatch", "Identificación de piezas", "teal"],
+  ];
+  root.innerHTML = `<h1 class="home-title">Inicio</h1><p class="home-subtitle">Selecciona un apartado</p><div class="module-list">${modules.map(([symbol,title,subtitle,color],i) => `<button ${i === 4 ? 'id="open"' : 'disabled'} class="module-card"><span class="module-icon ${color}">${icon(symbol)}</span><span class="module-copy"><strong>${title}</strong><span>${subtitle}</span>${i === 4 ? "" : '<small class="pending-label">Pendiente</small>'}</span><span class="module-chevron">${icon("chevron")}</span></button>`).join("")}</div><p class="build-label">QCS Prueba · 0.1.1 · Diseño 02/10/2026</p>`;
+  $("#open").onclick = library;
+}
+function settings() {
+  setScreen("settings");
+  root.innerHTML = `<h1>Ajustes</h1><section class="card"><h2>Copias y recuperación</h2><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión se instala aparte. No modifica ni migra datos de instalaciones anteriores. Solo recupera copias cifradas de esta entrega.</p></section><section class="card"><h2>Acceso local</h2><p>Recuperación de contraseña y Recordarme pendientes.</p>${button("lockSettings", "Bloquear acceso")}</section><p class="build-label">QCS Prueba · 0.1.1 · Diseño 02/10/2026</p>`;
+  $("#lockSettings").onclick = () => $("#lock").click();
   $("#restore").onclick = () => $("#backupFile").click();
   $("#backupFile").onchange = (e) =>
     run(() => restorePreview(e.target.files[0]));
   $("#recoverPhoto").onclick = () => run(recoverPhoto);
-  $("#open").onclick = library;
   $("#backup").onclick = () =>
     run(async () => {
       await download(
@@ -411,7 +447,7 @@ function renderPlans() {
 }
 function search() {
   setScreen("search");
-  root.innerHTML = `<h1>Buscar por medidas</h1><p>Comparación decimal inclusiva. Ambos bloques se combinan con Y; orientación independiente por bloque (perfil provisional visible).</p><fieldset><legend>Desarrollo</legend><label><input id="useDevelopment" type="checkbox" checked> Usar estas medidas</label><div class="grid">${field("developmentLength", "Largo (mm)")}${field("developmentWidth", "Ancho (mm)")}</div><p id="estimated"></p></fieldset><fieldset><legend>Pieza plegada</legend><label><input id="useFolded" type="checkbox"> Usar estas medidas</label><div class="grid">${field("foldedLength", "Largo (mm)")}${field("foldedWidth", "Ancho (mm)")}${field("foldedHeight", "Alto (mm)")}</div>${button("sum", "Sumar tramos para estimar desarrollo")}</fieldset><div class="grid">${field("tol", "Tolerancia vigente", 5)}<label>Unidad de tolerancia<select id="tolmode"><option value="mm">± mm</option><option value="percent">% de cada medida buscada</option></select></label></div><div class="actions">${button("find", "Comparar", true)}${button("library", "Biblioteca")}</div><div id="results"></div>`;
+  root.innerHTML = `<h1>Identificar pieza</h1><details class="search-note"><summary>Criterio de comparación</summary><p>Comparación decimal inclusiva. Ambos bloques se combinan con Y; orientación independiente por bloque (perfil provisional visible).</p></details><fieldset><legend>Pieza en desarrollo</legend><label><input id="useDevelopment" type="checkbox" checked> Usar estas medidas</label><div class="grid">${field("developmentLength", "Largo (mm)")}${field("developmentWidth", "Ancho (mm)")}</div><p id="estimated"></p></fieldset><fieldset><legend>Pieza plegada</legend><label><input id="useFolded" type="checkbox"> Usar estas medidas</label><div class="grid">${field("foldedLength", "Largo (mm)")}${field("foldedWidth", "Ancho (mm)")}${field("foldedHeight", "Alto (mm)")}</div>${button("sum", "Sumar tramos para estimar desarrollo")}</fieldset><div class="grid">${field("tol", "Tolerancia vigente", 5)}<label>Unidad de tolerancia<select id="tolmode"><option value="mm">± mm</option><option value="percent">% de cada medida buscada</option></select></label></div><div class="actions">${button("find", "Buscar coincidencias", true)}${button("library", "Biblioteca")}</div><div id="results"></div>`;
   $("#sum").onclick = sumDialog;
   $("#library").onclick = library;
   $("#find").onclick = () =>
@@ -479,7 +515,7 @@ function search() {
 }
 function sumDialog() {
   const d = document.createElement("dialog");
-  d.innerHTML = `<h2>Sumatorio · Pieza plegada</h2><p>Ocho celdas; las vacías se ignoran. Sin descuentos. Estima el desarrollo; no cambia las medidas plegadas.</p><div class="sum">${Array.from({ length: 8 }, (_, i) => `<input aria-label="Celda ${i + 1}" inputmode="decimal">`).join("")}</div><p id="sumvalue"></p><label>Aplicar al desarrollo<select id="sumtarget"><option value="">Elegir destino</option><option value="developmentLength">Largo</option><option value="developmentWidth">Ancho</option></select></label>${button("applysum", "Aplicar", true)} ${button("closesum", "Cancelar")}`;
+  d.innerHTML = `<h2>Sumar cotas</h2><p>Ocho celdas; las vacías se ignoran. Sin descuentos. Estima el desarrollo; no cambia las medidas plegadas.</p><div class="sum">${Array.from({ length: 8 }, (_, i) => `<label class="sum-cell">Cota ${i + 1}<span><input aria-label="Celda ${i + 1}" inputmode="decimal"><small>mm</small></span></label>`).join("")}</div><div class="sum-total">Total aproximado: <strong id="sumvalue"></strong><span>mm</span></div><label>Aplicar al desarrollo<select id="sumtarget"><option value="">Elegir destino</option><option value="developmentLength">Largo</option><option value="developmentWidth">Ancho</option></select></label><div class="actions">${button("clearSum", "Borrar cotas")}${button("applysum", "Usar este total", true)} ${button("closesum", "Cancelar")}</div>`;
   document.body.append(d);
   const inputs = [...d.querySelectorAll("input")];
   const update = () => {
@@ -503,6 +539,7 @@ function sumDialog() {
   };
   inputs.forEach((x) => (x.oninput = update));
   d.querySelector("#sumtarget").onchange = update;
+  d.querySelector("#clearSum").onclick = () => { inputs.forEach(x => x.value = ""); update(); };
   d.querySelector("#applysum").onclick = () => {
     const dest = $("#" + d.querySelector("#sumtarget").value);
     if (
@@ -712,7 +749,7 @@ $("#back").onclick = () =>
   run(async () => {
     if (screen === "editor") await save();
     if (screen === "home") return;
-    if (screen === "library") home();
+    if (screen === "library" || screen === "settings") home();
     else library();
   });
 $("#lock").onclick = () =>
@@ -722,6 +759,17 @@ $("#lock").onclick = () =>
     login();
     say("Acceso bloqueado.");
   });
+async function navigateTo(destination) {
+  if (screen === "login") return;
+  if (screen === "editor") await save();
+  if (destination === "home") home();
+  else if (destination === "settings") settings();
+  else library();
+}
+if ($("#bottomnav")) $("#bottomnav").querySelectorAll("button").forEach(b => {
+  b.onclick = () => run(() => navigateTo(b.dataset.nav));
+});
+if ($("#settingsTop")) $("#settingsTop").onclick = () => run(() => navigateTo("settings"));
 const vaultReady = vault.open();
 if (Capacitor.isNativePlatform()) {
   App.addListener("backButton", () =>

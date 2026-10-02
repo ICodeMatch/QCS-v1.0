@@ -1,9 +1,10 @@
-name: QMS Android prueba
+name: QCS Prueba — diseño acordado
 
 on:
   workflow_dispatch:
   push:
-    branches: [main, master]
+    branches: [implementacion/etapa1-qcs]
+    paths: ['app/**', '.github/workflows/build.yml']
 
 permissions:
   contents: read
@@ -11,65 +12,70 @@ permissions:
 jobs:
   android:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Descargar repositorio
+      - name: Descargar rama de prueba
         uses: actions/checkout@v4
-
-      - name: Descomprimir QMS
-        run: |
-          test -f QMS-0.1-proyecto.zip
-          unzip -q QMS-0.1-proyecto.zip -d qms-source
-          test -f qms-source/QMS/package.json
-
-      - name: Preparar Node.js
+      - name: Preparar Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Preparar Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-
-      - name: Preparar SDK Android
+      - name: Preparar Android
         uses: android-actions/setup-android@v3
-        with:
-          packages: 'platform-tools'
-
-      - name: Preparar proyecto Android
-        working-directory: qms-source/QMS
+      - name: Comprobar y preparar app
+        working-directory: app
         run: |
-          npm install
-          npx cap add android
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path('android/app/src/main/AndroidManifest.xml')
-          s = p.read_text()
-          s = s.replace('@mipmap/ic_launcher_round', '@drawable/qms_icon')
-          s = s.replace('@mipmap/ic_launcher', '@drawable/qms_icon')
-          s = s.replace(
-              '<application',
-              '<uses-permission android:name="android.permission.CAMERA"/><application',
-              1
-          )
-          p.write_text(s)
-          PY
-          mkdir -p android/app/src/main/res/drawable
-          cp native-assets/qms_icon.xml android/app/src/main/res/drawable/qms_icon.xml
+          npm ci
+          npm test
+          npm run build
           npx cap sync android
-
-      - name: Compilar APK de prueba
-        working-directory: qms-source/QMS/android
+      - name: Compilar QCS Prueba
+        working-directory: app/android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
-
-      - name: Guardar APK
+      - name: Renderizar acceso, Inicio y sumatorio
+        working-directory: app
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8080 --directory www &
+          QCS_WEB_PID=$!
+          trap 'kill "$QCS_WEB_PID" || true' EXIT
+          mkdir -p previews
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({headless:true});
+          const page = await browser.newPage({viewport:{width:393,height:852}});
+          const errors=[];
+          page.on('pageerror',e=>errors.push(e.message));
+          await page.goto('http://127.0.0.1:8080');
+          await page.locator('#password').waitFor();
+          await page.screenshot({path:'previews/01-acceso.png',fullPage:true});
+          await page.locator('#password').fill('contraseña de prueba visual');
+          await page.locator('#enter').click();
+          await page.locator('#open').waitFor();
+          await page.screenshot({path:'previews/02-inicio.png',fullPage:true});
+          if(await page.locator('.module-card').count()!==5) throw Error('Inicio incompleto');
+          if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error('Desbordamiento horizontal');
+          await page.locator('#open').click();
+          await page.locator('#measure').click();
+          await page.screenshot({path:'previews/03-codematch.png',fullPage:true});
+          await page.locator('#sum').click();
+          await page.screenshot({path:'previews/04-sumatorio.png',fullPage:true});
+          if(await page.locator('dialog input').count()!==8) throw Error('Sumatorio incompleto');
+          await browser.close();
+          if(errors.length) throw Error(errors.join('\n'));
+          JS
+      - name: Guardar APK y vistas
         uses: actions/upload-artifact@v4
         with:
-          name: QMS-0.1-APK-PRUEBA
-          path: qms-source/QMS/android/app/build/outputs/apk/debug/*.apk
+          name: QCS-Prueba-0.1.1
+          path: |
+            app/android/app/build/outputs/apk/debug/*.apk
+            app/previews/*.png
           if-no-files-found: error

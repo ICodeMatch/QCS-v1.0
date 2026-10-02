@@ -106,8 +106,11 @@ jobs:
           await page.locator('#back').click();
           await page.locator('#open').waitFor();
           await page.locator('[data-nav="records"]').click();
-          await page.waitForFunction(()=>document.querySelector('#codematchFrame')?.contentWindow.qcsCodeMatch?.ready);
-          await cm.locator('#libraryView.active').waitFor();
+          await page.locator('body[data-screen="records"]').waitFor();
+          if(await page.locator('#codematchFrame').count()) throw Error('Registros abre CodeMatch');
+          await page.screenshot({path:'previews/05-registros.png',fullPage:true});
+          await page.locator('#back').click();
+          await page.locator('#open').waitFor();
           await page.locator('#settingsTop').click();
           await page.locator('#backup').waitFor();
           await page.locator('[data-nav="home"]').click();
@@ -128,10 +131,9 @@ jobs:
       - name: Guardar APK y vistas
         uses: actions/upload-artifact@v4
         with:
-          name: QCS-Prueba-CodeMatch-0.1.3
+          name: QCS-Prueba-CodeMatch-0.1.4
           path: |
             app/android/app/build/outputs/apk/debug/*.apk
             app/previews/*.png
             tooling/apksigner.jar
           if-no-files-found: error
-

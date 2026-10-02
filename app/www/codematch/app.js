@@ -109,7 +109,8 @@ $('#qcsBackup').onclick=()=>bridge.settings();
 $('#clearSearch').onclick=()=>{$('#searchForm').reset();$('#searchTolerance').value='5';$('#results').innerHTML='';$('#searchMessage').textContent='Filtros limpiados.';};
 function searchState(r,q){
   const states=[];
-  const dimensions=pair([r[q.mode+'Length'],r[q.mode+'Width']],[q.x,q.y],q.tol,q.percent);states.push(dimensions);
+  states.push(pair([r.developedLength,r.developedWidth],[q.x,q.y],q.tol,q.percent));
+  states.push(pair([r.foldedLength,r.foldedWidth],[q.fx,q.fy],q.tol,q.percent));
   for(const [key,target] of [['foldedHeight',q.h],['thickness',q.thickness]]){
     if(target==null)continue;
     states.push(r[key]==null||r[key]===''?'No evaluable':within(r[key],target,q.tol,q.percent)?'Coincidencia':'Descartada');
@@ -119,7 +120,7 @@ function searchState(r,q){
   return states.includes('No evaluable')?'No evaluable':'Coincidencia';
 }
 function runSearch(){
-  const q={text:$('#searchText').value,x:num($('#searchLength').value),y:num($('#searchWidth').value),h:num($('#searchHeight').value),thickness:num($('#searchThickness').value),material:normalize($('#searchMaterial').value),hand:normalize($('#searchHand').value),revision:normalize($('#searchRevision').value),feature:normalize($('#searchFeature').value),tol:$('#searchTolerance').value,percent:$('#searchToleranceMode').value==='percent',mode:$('#measureMode').value};decimal(q.tol);
+  const q={text:$('#searchText').value,x:num($('#searchLength').value),y:num($('#searchWidth').value),fx:num($('#searchFoldedLength').value),fy:num($('#searchFoldedWidth').value),h:num($('#searchHeight').value),thickness:num($('#searchThickness').value),material:normalize($('#searchMaterial').value),hand:normalize($('#searchHand').value),revision:normalize($('#searchRevision').value),feature:normalize($('#searchFeature').value),tol:$('#searchTolerance').value,percent:$('#searchToleranceMode').value==='percent'};decimal(q.tol);
   const out=records.map(r=>({r,state:searchState(r,q)}));
   $('#searchMessage').textContent=`${out.filter(x=>x.state==='Coincidencia').length} coincidencias · tolerancia inclusiva ${q.percent?q.tol+' %':'±'+q.tol+' mm'}.`;
   $('#results').innerHTML=['Coincidencia','No evaluable','Descartada'].map(state=>{
@@ -141,7 +142,7 @@ $('#clearCotasBtn').onclick=()=>{foldCotas[foldCalcTarget]=Array(8).fill('');ren
 $('#applyCotasBtn').onclick=()=>{
   const dest=$('#'+foldCalcTarget);
   if(dest.value&&!confirm('¿Sustituir esta medida por el total de cotas?'))return;
-  dest.value=sum(foldCotas[foldCalcTarget]);$('#measureMode').value='developed';$('#foldCalcDialog').close();
+  dest.value=sum(foldCotas[foldCalcTarget]);$('#foldCalcDialog').close();
   toast(`Total aplicado al ${foldCalcTarget==='searchLength'?'largo':'ancho'} desarrollado`);
 };
 function renderRecordAttachments(code){

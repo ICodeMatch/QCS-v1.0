@@ -29,6 +29,18 @@ test('pantallas históricas: biblioteca, ficha, Volver y sumatorio en su campo o
  $('[data-cota-index="0"]').value='1,005';$('[data-cota-index="0"]').dispatchEvent(new w.Event('input'));
  $('[data-cota-index="1"]').value='2';$('[data-cota-index="1"]').dispatchEvent(new w.Event('input'));
  assert.equal($('#foldCalcTotal').textContent,'3,005 mm');$('#applyCotasBtn').click();await tick(()=>!$('#foldCalcDialog').open);
- assert.equal($('#searchWidth').value,'3,005');assert.equal($('#measureMode').value,'developed');
+ assert.equal($('#searchWidth').value,'3,005');assert.equal($('#measureMode'),null);assert.equal($('#searchFoldedLength').value,'');
+ rows.push({code:'A',name:'Ambos límites',developedLength:'100',developedWidth:'50',foldedLength:'80',foldedWidth:'40'},
+ {code:'B',name:'Falta plegada',developedLength:'100',developedWidth:'50'},
+ {code:'C',name:'Plegada distinta',developedLength:'100',developedWidth:'50',foldedLength:'90',foldedWidth:'40'});
+ $('#clearSearch').click();await delay(0);$('#searchLength').value='100,1';$('#searchWidth').value='50';$('#searchFoldedLength').value='80';$('#searchFoldedWidth').value='40';$('#searchTolerance').value='0,1';
+ $('#searchForm').dispatchEvent(new w.Event('submit',{cancelable:true}));
+ await tick(()=>$('#results h2')?.textContent==='Coincidencia · 1');
+ const headings=[...w.document.querySelectorAll('#results h2')].map(x=>x.textContent);
+ assert.deepEqual(headings,['Coincidencia · 1','No evaluable · 1','Descartada · 2']);
+ $('#clearSearch').click();await delay(0);$('#searchFoldedLength').value='40';$('#searchFoldedWidth').value='80';$('#searchTolerance').value='0';
+ $('#searchForm').dispatchEvent(new w.Event('submit',{cancelable:true}));
+ await tick(()=>$('#results h2')?.textContent==='Coincidencia · 1');
+ assert.equal($('#results h2').textContent,'Coincidencia · 1');
  w.close();
 });

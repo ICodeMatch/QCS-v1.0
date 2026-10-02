@@ -57,11 +57,11 @@ function setScreen(s) {
   $("#lock").hidden = s === "login";
   document.body.dataset.screen = s;
   const title = $(".brand-title");
-  if (title) title.textContent = s === "home" || s === "login" ? "Quality Control Suite" : s === "settings" ? "Ajustes" : "CodeMatch";
+  if (title) title.textContent = s === "home" || s === "login" ? "Quality Control Suite" : s === "settings" ? "Ajustes" : s === "records" ? "Registros" : "CodeMatch";
   const nav = $("#bottomnav");
   if (nav) {
     nav.hidden = s === "login";
-    const active = s === "home" ? "home" : s === "settings" ? "settings" : "records";
+    const active = s === "home" ? "home" : s === "settings" ? "settings" : s === "records" ? "records" : "";
     nav.querySelectorAll("button").forEach(b => {
       const selected = b.dataset.nav === active;
       b.classList.toggle("active", selected);
@@ -81,7 +81,7 @@ function login() {
   setScreen("login");
   records = [];
   editing = null;
-  root.innerHTML = `<section class="login-panel"><img class="brand-mark brand-mark-large" src="assets/qcs-logo.svg" alt="Logo QCS"><h1>Quality Control Suite</h1><p class="login-subtitle">Gestión de la calidad</p><section class="login-form"><h2>Bienvenido</h2><label>Contraseña<div class="password-row"><input id="password" type="password" autocomplete="current-password"><button id="passwordEye" class="password-eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><small class="password-hint">Al crearla: mínimo 8 caracteres.</small><label class="remember"><input type="checkbox" disabled> Recordarme <span class="badge">Pendiente</span></label>${button("enter", "Entrar", true)}<p class="forgot-row">${button("forgot", "¿Has olvidado la contraseña?")}</p></section><p class="login-caption">Acceso a Quality Control Suite</p><details class="access-note"><summary>Acceso local provisional · QCS Prueba</summary><p>Los datos nuevos se guardan cifrados en este dispositivo. No acredita identidad ni permisos de empresa. Recuperación pendiente: conserva la contraseña; no existe restablecimiento automático.</p></details><small class="build-label">QCS Prueba CodeMatch · 0.1.3 · Diseño 02/10/2026</small></section>`;
+  root.innerHTML = `<section class="login-panel"><img class="brand-mark brand-mark-large" src="assets/qcs-logo.svg" alt="Logo QCS"><h1>Quality Control Suite</h1><p class="login-subtitle">Gestión de la calidad</p><section class="login-form"><h2>Bienvenido</h2><label>Contraseña<div class="password-row"><input id="password" type="password" autocomplete="current-password"><button id="passwordEye" class="password-eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><small class="password-hint">Al crearla: mínimo 8 caracteres.</small><label class="remember"><input type="checkbox" disabled> Recordarme <span class="badge">Pendiente</span></label>${button("enter", "Entrar", true)}<p class="forgot-row">${button("forgot", "¿Has olvidado la contraseña?")}</p></section><p class="login-caption">Acceso a Quality Control Suite</p><details class="access-note"><summary>Acceso local provisional · QCS Prueba</summary><p>Los datos nuevos se guardan cifrados en este dispositivo. No acredita identidad ni permisos de empresa. Recuperación pendiente: conserva la contraseña; no existe restablecimiento automático.</p></details><small class="build-label">QCS Prueba CodeMatch · 0.1.4 · Diseño 02/10/2026</small></section>`;
   $("#passwordEye").onclick = () => {
     const p = $("#password");
     p.type = p.type === "password" ? "text" : "password";
@@ -112,8 +112,12 @@ function home() {
     ["project", "Proyectos de calidad", "Acciones y seguimiento", "purple"],
     ["scan", "CodeMatch", "Identificación de piezas", "teal"],
   ];
-  root.innerHTML = `<h1 class="home-title">Inicio</h1><p class="home-subtitle">Selecciona un apartado</p><div class="module-list">${modules.map(([symbol,title,subtitle,color],i) => `<button ${i === 4 ? 'id="open"' : 'disabled'} class="module-card"><span class="module-icon ${color}">${icon(symbol)}</span><span class="module-copy"><strong>${title}</strong><span>${subtitle}</span>${i === 4 ? "" : '<small class="pending-label">Pendiente</small>'}</span><span class="module-chevron">${icon("chevron")}</span></button>`).join("")}</div><p class="build-label">QCS Prueba CodeMatch · 0.1.3 · Diseño 02/10/2026</p>`;
+  root.innerHTML = `<h1 class="home-title">Inicio</h1><p class="home-subtitle">Selecciona un apartado</p><div class="module-list">${modules.map(([symbol,title,subtitle,color],i) => `<button ${i === 4 ? 'id="open"' : 'disabled'} class="module-card"><span class="module-icon ${color}">${icon(symbol)}</span><span class="module-copy"><strong>${title}</strong><span>${subtitle}</span>${i === 4 ? "" : '<small class="pending-label">Pendiente</small>'}</span><span class="module-chevron">${icon("chevron")}</span></button>`).join("")}</div><p class="build-label">QCS Prueba CodeMatch · 0.1.4 · Diseño 02/10/2026</p>`;
   $("#open").onclick = () => codeMatch();
+}
+function globalRecords() {
+  setScreen("records");
+  root.innerHTML = `<h1 class="home-title">Registros</h1><p class="home-subtitle">Quality Control Suite</p><section class="panel"><h2>Registros de calidad</h2><p>Este apartado está pendiente en la versión de prueba.</p><p>Las fichas de piezas están en CodeMatch → Biblioteca.</p><span class="badge">Pendiente</span></section>`;
 }
 const cmStore = new CodeMatchStore(vault);
 function codeMatch(startView="search") {
@@ -159,7 +163,7 @@ async function prepareCodeMatchLeave(){
 }
 function settings() {
   setScreen("settings");
-  root.innerHTML = `<h1>Ajustes</h1><section class="card"><h2>Copias y recuperación</h2><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión se instala aparte. No modifica ni migra datos de instalaciones anteriores. Solo recupera copias cifradas de esta entrega.</p></section><section class="card"><h2>Acceso local</h2><p>Recuperación de contraseña y Recordarme pendientes.</p>${button("lockSettings", "Bloquear acceso")}</section><p class="build-label">QCS Prueba CodeMatch · 0.1.3 · Diseño 02/10/2026</p>`;
+  root.innerHTML = `<h1>Ajustes</h1><section class="card"><h2>Copias y recuperación</h2><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión se instala aparte. No modifica ni migra datos de instalaciones anteriores. Solo recupera copias cifradas de esta entrega.</p></section><section class="card"><h2>Acceso local</h2><p>Recuperación de contraseña y Recordarme pendientes.</p>${button("lockSettings", "Bloquear acceso")}</section><p class="build-label">QCS Prueba CodeMatch · 0.1.4 · Diseño 02/10/2026</p>`;
   $("#lockSettings").onclick = () => $("#lock").click();
   $("#restore").onclick = () => $("#backupFile").click();
   $("#backupFile").onchange = (e) =>
@@ -804,7 +808,7 @@ $("#back").onclick = () =>
     }
     if (screen === "editor") await save();
     if (screen === "home") return;
-    if (screen === "library" || screen === "settings") home();
+    if (screen === "library" || screen === "settings" || screen === "records") home();
     else library();
   });
 $("#lock").onclick = () =>
@@ -822,7 +826,7 @@ async function navigateTo(destination) {
   await refresh();
   if (destination === "home") home();
   else if (destination === "settings") settings();
-  else codeMatch("library");
+  else globalRecords();
 }
 if ($("#bottomnav")) $("#bottomnav").querySelectorAll("button").forEach(b => {
   b.onclick = () => run(() => navigateTo(b.dataset.nav));

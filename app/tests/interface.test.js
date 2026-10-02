@@ -23,5 +23,6 @@ test('acceso mínimo de ocho, nombre del módulo y regreso a Inicio desde CodeMa
  $('#open').click();$('#codematchFrame').contentWindow.qcsCodeMatch={prepareLeave:async()=>{leave++;}};
  $('[data-nav="settings"]').click();await until(()=>$('#backup'));assert.equal(leave,1);
  $('[data-nav="home"]').click();await until(()=>$('#open'));
+ $('[data-nav="records"]').click();await until(()=>document.body.dataset.screen==='records');assert.equal($('#codematchFrame'),null);assert.match($('#app').textContent,/pendiente/);$('#back').click();await until(()=>$('#open'));
  $('#lock').click();await until(()=>$('#password'));$('#password').value='12345678';$('#enter').click();await until(()=>$('#open'));
 });

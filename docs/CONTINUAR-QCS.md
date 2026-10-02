@@ -33,3 +33,7 @@ El usuario pidió continuar por bloques sin crear APK por cada ajuste. El siguie
 ## B4 · Informes preparados en código
 
 Ver docs/32-informes-avisos-sin-apk.md: PDF/Excel/Word con fotos y comentarios, instantáneas cifradas conservadas y volver a compartir el mismo archivo. 14 pruebas locales pasan, compilación web correcta y PDF de ensayo revisado visualmente. Pendientes navegador integrado y OPPO, apertura Word/Excel y copia real histórica. No generar una APK por cada cambio. Claude puede revisar B2; la consolidación B5_CAPACIDAD_COMPLETO.md debe recibirse completa antes de implementarla. Su resumen anuncia cinco puntos abiertos y P5; no se toman como decisiones aprobadas.
+
+## B4 · Revisión integrada web ejecutada
+
+Ver docs/33-revision-integrada-avisos.md. Chromium real: seis fotos sintéticas, generación/descarga PDF/XLSX/DOCX, retirada con copia conservada, reapertura y recuperación cifrada en almacenamiento nuevo con Avisos e informes y CodeMatch. PDF idéntico antes/después y tras restauración. Cero errores JavaScript y sin desbordamiento horizontal comprobado. Script scripts/check-avisos-browser.mjs y evidencia web en Actions permiten repetir sin Android. OPPO y copias históricas siguen pendientes. Próxima secuencia: APK de prueba del bloque revisado y aceptación en OPPO; no se exige validación móvil antes de disponer de la APK.

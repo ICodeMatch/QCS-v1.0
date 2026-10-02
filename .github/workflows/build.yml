@@ -23,6 +23,21 @@ jobs:
           npm ci
           npm test
           npm run build
+      - name: Comprobar Avisos integrado en navegador
+        working-directory: app
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8080 --directory www &
+          QCS_WEB_PID=$!
+          trap 'kill "$QCS_WEB_PID" || true' EXIT
+          node scripts/check-avisos-browser.mjs
+      - name: Guardar evidencia de revisión web
+        uses: actions/upload-artifact@v4
+        with:
+          name: QCS-Avisos-revision-web
+          path: app/previews/avisos/
+          if-no-files-found: error
   android:
     needs: web
     if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[apk]')

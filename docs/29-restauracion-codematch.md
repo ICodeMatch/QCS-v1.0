@@ -15,3 +15,8 @@ Se prepara una última variante separada QCS Prueba CodeMatch, applicationId com
 ## Validación pendiente de cierre
 Nueve pruebas locales pasan. La compilación anterior y recorridos de navegador pasaron; las pantallas renderizadas se revisaron. Se añaden recorridos de navegador reales para 7 caracteres rechazados/8 aceptados, suma decimal, fichas al volver, Biblioteca/Planos/Excel, Ajustes e Inicio. Compilación y renderizados por GitHub Actions; comprobar resultado antes de entregar.
 Instalación, permisos/cámara y los recorridos completos en OPPO siguen pendientes. No se declara migración validada de copias antiguas v1/v2 de la aplicación habitual.
+
+## Firma de la variante definitiva de prueba
+Clave de pruebas QCS-Prueba-CodeMatch-firma.p12 conservada en Library, ID libfile_af8b3f2a0bdc81918d1c2f0042f6f11b. No subirla al repositorio ni a los artifacts de GitHub. Alias qcs-prueba-codematch. La credencial se suministra únicamente mediante entrada segura local, fuera del repositorio. Exclusivamente desarrollo, no firma empresarial.
+Certificado esperado SHA256 151f60e27b28b29fc98797366c74bd7ce27021ad3ad7bc3c1ea51fdb37127193.
+Para la siguiente entrega recuperar esa misma clave y ejecutar app/scripts/sign-test-apk.sh con apksigner.jar del artifact, clave, APK de CI y APK final. Verificar certificado antes de entregar; nunca crear una clave nueva para actualizar com.qualitycontrol.suite.stage1layout.

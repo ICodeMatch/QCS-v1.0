@@ -119,9 +119,12 @@ jobs:
       - name: Preparar herramienta de firma para la entrega
         run: |
           mkdir -p tooling
-          QCS_APKSIGNER_PATH=$(rg --files "$ANDROID_HOME/build-tools" | rg '/lib/apksigner.jar$' | sort | tail -n 1)
-          test -n "$QCS_APKSIGNER_PATH"
-          cp "$QCS_APKSIGNER_PATH" tooling/apksigner.jar
+          python3 - <<'PY_SIGN_TOOL'
+          import os,glob,shutil
+          paths=sorted(glob.glob(os.path.join(os.environ['ANDROID_HOME'],'build-tools','*','lib','apksigner.jar')))
+          if not paths: raise SystemExit('No se encontró apksigner.jar en el SDK usado para compilar')
+          shutil.copyfile(paths[-1],'tooling/apksigner.jar')
+          PY_SIGN_TOOL
       - name: Guardar APK y vistas
         uses: actions/upload-artifact@v4
         with:

@@ -1,3 +1,4 @@
+import { AvisoReports, REPORT_FORMATS } from "./aviso-reports.js";
 import { AvisosStore } from "./avisos-store.js";
 import { AvisosModule } from "./avisos-ui.js";
 import { evidencePhoto } from "./evidence-photos.js";
@@ -31,7 +32,7 @@ let records = [],
   saveTimer = null,
   queue = Promise.resolve();
 let avisosModule = null;
-const avisosStore = new AvisosStore(vault);
+const avisosStore = new AvisosStore(vault), avisoReports = new AvisoReports(vault);
 function button(id, text, primary = false) {
   return `<button id="${id}" ${primary ? 'class="primary"' : ""}>${text}</button>`;
 }
@@ -124,7 +125,7 @@ function home() {
 }
 async function openAvisos(id) {
   setScreen("avisos");
-  avisosModule = new AvisosModule({root,store:avisosStore,say,
+  avisosModule = new AvisosModule({root,store:avisosStore,reports:avisoReports,download,say,
     title: text => { if($(".brand-title")) $(".brand-title").textContent=text; },
     beginCapture: async (recordId,camera) => {
       const pending=await vault.get("capture-pending"),captureId=crypto.randomUUID();
@@ -666,8 +667,9 @@ async function restorePreview(file) {
         existing = await vault.list(),
         ids = new Set(existing.map((v) => v.id)),
         codes = new Set(records.map((v) => v.code)),
-        fresh = all.filter((v) => ["code","codematch","aviso"].includes(v.kind) && !ids.has(v.id));
+        fresh = all.filter((v) => ["code","codematch","aviso","aviso-report"].includes(v.kind) && !ids.has(v.id));
       for (const v of fresh) {
+        if(v.kind==="aviso-report"){if(!REPORT_FORMATS[v.format]||v.mime!==REPORT_FORMATS[v.format].mime||!v.data||v.snapshot?.kind!=="aviso"||v.snapshot.id!==v.avisoId||!v.generatedAt)throw Error("Informe de aviso incompatible.");continue;}
         if(v.kind==="aviso"){if(!["internal","provider","customer"].includes(v.type)||!Array.isArray(v.photos)||!v.createdAt)throw Error("Borrador de aviso incompatible.");continue;}
         if(v.kind==="codematch"){if(!v.store||!v.value)throw Error("Copia incompatible.");continue;}
         if (!v.code || !Array.isArray(v.photos) || codes.has(v.code))
@@ -676,7 +678,7 @@ async function restorePreview(file) {
           );
         codes.add(v.code);
       }
-      root.innerHTML = `<h1>Copia comprobada</h1><p>${fresh.length} registros nuevos; ${all.filter(v=>["code","codematch","aviso"].includes(v.kind)).length-fresh.length} ya existentes, sin sustituir.</p>${button("applyBackup", "Añadir registros de la copia", true)} ${button("cancelBackup", "Cancelar")}`;
+      root.innerHTML = `<h1>Copia comprobada</h1><p>${fresh.length} registros nuevos; ${all.filter(v=>["code","codematch","aviso","aviso-report"].includes(v.kind)).length-fresh.length} ya existentes, sin sustituir.</p>${button("applyBackup", "Añadir registros de la copia", true)} ${button("cancelBackup", "Cancelar")}`;
       $("#cancelBackup").onclick = home;
       $("#applyBackup").onclick = () =>
         run(async () => {

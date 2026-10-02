@@ -29,3 +29,7 @@ No publicar claves de firma, credenciales, plantillas corporativas ni detalles s
 ## Nueva forma de trabajo y avance Avisos
 
 El usuario pidió continuar por bloques sin crear APK por cada ajuste. El siguiente código de Avisos aún no está en la APK 0.1.4. Ver docs/31-avance-avisos-sin-apk.md: flujo de borradores, evidencias y consulta preparado, 11 pruebas locales; informes y verificación Android pendientes. Android en esta rama solo se compila con workflow_dispatch o commit marcado [apk]; pushes ordinarios validan código web. Continuar Avisos antes de pasar a Homologaciones.
+
+## B4 · Informes preparados en código
+
+Ver docs/32-informes-avisos-sin-apk.md: PDF/Excel/Word con fotos y comentarios, instantáneas cifradas conservadas y volver a compartir el mismo archivo. 14 pruebas locales pasan, compilación web correcta y PDF de ensayo revisado visualmente. Pendientes navegador integrado y OPPO, apertura Word/Excel y copia real histórica. No generar una APK por cada cambio. Claude puede revisar B2; la consolidación B5_CAPACIDAD_COMPLETO.md debe recibirse completa antes de implementarla. Su resumen anuncia cinco puntos abiertos y P5; no se toman como decisiones aprobadas.

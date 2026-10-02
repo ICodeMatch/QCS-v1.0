@@ -17,7 +17,7 @@ APK separada: appId com.qualitycontrol.suite.stage1; nombre QCS Prueba; versionC
 - Artefacto: QCS-Prueba-0.1.1, ID 11217992743. Contiene APK y previews/01-acceso.png, 02-inicio.png, 03-codematch.png, 04-sumatorio.png.
 - ChatGPT descargó e inspeccionó esas capturas. Detectó medidas apiladas en CodeMatch y tarjetas de Inicio demasiado altas.
 - Commit 3929d5a corrigió CSS: cotas de desarrollo en 2 columnas, plegada en 3, tarjetas de Inicio compactas.
-- Run 36987305322 compila ese último cambio. Al redactar este relevo sigue EN CURSO, no declarar éxito hasta consultar el resultado.
+- ACTUALIZACIÓN 11:01: run 36987305322 completado con SUCCESS, confirmado por GitHub. Último CSS, APK y capturas generados correctamente. Capturas de este último run pendientes de inspección visual; aceptación OPPO pendiente.
 - https://github.com/ICodeMatch/QCS-v1.0/actions/runs/36987305322
 - El primer intento de este trabajo falló antes de compilar por paquete Android SDK 'tools' retirado. Resuelto: setup-android con packages: platform-tools.
 - Ninguna prueba en OPPO ejecutada. Los 13 recorridos de aceptación de Claude siguen pendientes.

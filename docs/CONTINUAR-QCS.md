@@ -6,7 +6,7 @@ Actualizado por ChatGPT el 2 de octubre de 2026.
 
 La implementación está en la rama `implementacion/etapa1-qcs`, directorio `app/`. No continuar desde los ZIP antiguos de `main`. El usuario autorizó el prototipo y sus correcciones: el alcance exclusivamente documental de los informes históricos ya no describe el trabajo de ChatGPT.
 
-Versión de prueba en preparación: QCS Prueba CodeMatch 0.1.4. Acceso QCS antes del Inicio; contraseña mínima ocho caracteres; mismo identificador y firma de entrega que 0.1.3. Recuperación y Recordarme pendientes. No desinstalar para actualizar; hacer copia previa.
+Última APK entregada: QCS Prueba CodeMatch 0.1.4. Acceso QCS antes del Inicio; contraseña mínima ocho caracteres; mismo identificador y firma de entrega que 0.1.3. Recuperación y Recordarme pendientes. No desinstalar para actualizar; hacer copia previa.
 
 CodeMatch conserva el layout histórico aceptado, biblioteca, fotos de referencia múltiples reducidas sin análisis automático, Excel/CSV y planos. Desarrollo y plegada se muestran juntos y se combinan; sumatorio fijo ocho celdas 2×4, desde plegada aplica al largo o ancho del desarrollo elegido. Registros global es un apartado QCS pendiente, separado de Biblioteca. Icono QCS con letras/tic. Inicio: No conformidades, Homologaciones, Herramientas de calidad, Proyectos de calidad, CodeMatch.
 
@@ -25,3 +25,7 @@ Referencias: docs/16-contratos-b0-b7a-v0.1.md, docs/18-contratos-v0.2-y-b6-revis
 El usuario traslada informes de Claude mientras no se verifique su escritura en GitHub. No afirmar vigilancia continua ni coordinación automática. Por tarea: propietario, rama, commit y pruebas; comprobar estado antes de editar. No tocar los ZIP/workflow de main ni trabajo ajeno, hacer merges o cerrar la Issue durante estas correcciones.
 
 No publicar claves de firma, credenciales, plantillas corporativas ni detalles sensibles de revisión. El histórico conserva documentos anteriores; este resumen no afirma que se haya saneado todo el repositorio.
+
+## Nueva forma de trabajo y avance Avisos
+
+El usuario pidió continuar por bloques sin crear APK por cada ajuste. El siguiente código de Avisos aún no está en la APK 0.1.4. Ver docs/31-avance-avisos-sin-apk.md: flujo de borradores, evidencias y consulta preparado, 11 pruebas locales; informes y verificación Android pendientes. Android en esta rama solo se compila con workflow_dispatch o commit marcado [apk]; pushes ordinarios validan código web. Continuar Avisos antes de pasar a Homologaciones.

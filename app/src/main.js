@@ -1,3 +1,6 @@
+import { AvisosStore } from "./avisos-store.js";
+import { AvisosModule } from "./avisos-ui.js";
+import { evidencePhoto } from "./evidence-photos.js";
 import { CodeMatchStore } from "./codematch-store.js";
 import { Vault } from "./vault.js";
 import { decimal, sum, pair, within } from "./decimal.js";
@@ -27,6 +30,8 @@ let records = [],
   restored = null,
   saveTimer = null,
   queue = Promise.resolve();
+let avisosModule = null;
+const avisosStore = new AvisosStore(vault);
 function button(id, text, primary = false) {
   return `<button id="${id}" ${primary ? 'class="primary"' : ""}>${text}</button>`;
 }
@@ -57,7 +62,7 @@ function setScreen(s) {
   $("#lock").hidden = s === "login";
   document.body.dataset.screen = s;
   const title = $(".brand-title");
-  if (title) title.textContent = s === "home" || s === "login" ? "Quality Control Suite" : s === "settings" ? "Ajustes" : s === "records" ? "Registros" : "CodeMatch";
+  if (title) title.textContent = s === "home" || s === "login" ? "Quality Control Suite" : s === "settings" ? "Ajustes" : s === "records" ? "Registros" : s === "avisos" ? "No conformidades / Avisos" : "CodeMatch";
   const nav = $("#bottomnav");
   if (nav) {
     nav.hidden = s === "login";
@@ -81,7 +86,8 @@ function login() {
   setScreen("login");
   records = [];
   editing = null;
-  root.innerHTML = `<section class="login-panel"><img class="brand-mark brand-mark-large" src="assets/qcs-logo.svg" alt="Logo QCS"><h1>Quality Control Suite</h1><p class="login-subtitle">Gestión de la calidad</p><section class="login-form"><h2>Bienvenido</h2><label>Contraseña<div class="password-row"><input id="password" type="password" autocomplete="current-password"><button id="passwordEye" class="password-eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><small class="password-hint">Al crearla: mínimo 8 caracteres.</small><label class="remember"><input type="checkbox" disabled> Recordarme <span class="badge">Pendiente</span></label>${button("enter", "Entrar", true)}<p class="forgot-row">${button("forgot", "¿Has olvidado la contraseña?")}</p></section><p class="login-caption">Acceso a Quality Control Suite</p><details class="access-note"><summary>Acceso local provisional · QCS Prueba</summary><p>Los datos nuevos se guardan cifrados en este dispositivo. No acredita identidad ni permisos de empresa. Recuperación pendiente: conserva la contraseña; no existe restablecimiento automático.</p></details><small class="build-label">QCS Prueba CodeMatch · 0.1.4 · Diseño 02/10/2026</small></section>`;
+  avisosModule = null;
+  root.innerHTML = `<section class="login-panel"><img class="brand-mark brand-mark-large" src="assets/qcs-logo.svg" alt="Logo QCS"><h1>Quality Control Suite</h1><p class="login-subtitle">Gestión de la calidad</p><section class="login-form"><h2>Bienvenido</h2><label>Contraseña<div class="password-row"><input id="password" type="password" autocomplete="current-password"><button id="passwordEye" class="password-eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><small class="password-hint">Al crearla: mínimo 8 caracteres.</small><label class="remember"><input type="checkbox" disabled> Recordarme <span class="badge">Pendiente</span></label>${button("enter", "Entrar", true)}<p class="forgot-row">${button("forgot", "¿Has olvidado la contraseña?")}</p></section><p class="login-caption">Acceso a Quality Control Suite</p><details class="access-note"><summary>Acceso local provisional · QCS Prueba</summary><p>Los datos nuevos se guardan cifrados en este dispositivo. No acredita identidad ni permisos de empresa. Recuperación pendiente: conserva la contraseña; no existe restablecimiento automático.</p></details><small class="build-label">QCS en desarrollo · Base 0.1.4 · Avisos en preparación</small></section>`;
   $("#passwordEye").onclick = () => {
     const p = $("#password");
     p.type = p.type === "password" ? "text" : "password";
@@ -112,8 +118,25 @@ function home() {
     ["project", "Proyectos de calidad", "Acciones y seguimiento", "purple"],
     ["scan", "CodeMatch", "Identificación de piezas", "teal"],
   ];
-  root.innerHTML = `<h1 class="home-title">Inicio</h1><p class="home-subtitle">Selecciona un apartado</p><div class="module-list">${modules.map(([symbol,title,subtitle,color],i) => `<button ${i === 4 ? 'id="open"' : 'disabled'} class="module-card"><span class="module-icon ${color}">${icon(symbol)}</span><span class="module-copy"><strong>${title}</strong><span>${subtitle}</span>${i === 4 ? "" : '<small class="pending-label">Pendiente</small>'}</span><span class="module-chevron">${icon("chevron")}</span></button>`).join("")}</div><p class="build-label">QCS Prueba CodeMatch · 0.1.4 · Diseño 02/10/2026</p>`;
+  root.innerHTML = `<h1 class="home-title">Inicio</h1><p class="home-subtitle">Selecciona un apartado</p><div class="module-list">${modules.map(([symbol,title,subtitle,color],i) => `<button ${i === 4 ? 'id="open"' : i === 0 ? 'id="openAvisos"' : 'disabled'} class="module-card"><span class="module-icon ${color}">${icon(symbol)}</span><span class="module-copy"><strong>${title}</strong><span>${subtitle}</span>${i === 4 || i === 0 ? "" : '<small class="pending-label">Pendiente</small>'}</span><span class="module-chevron">${icon("chevron")}</span></button>`).join("")}</div><p class="build-label">QCS en desarrollo · Base 0.1.4 · Avisos en preparación</p>`;
   $("#open").onclick = () => codeMatch();
+  $("#openAvisos").onclick = () => run(() => openAvisos());
+}
+async function openAvisos(id) {
+  setScreen("avisos");
+  avisosModule = new AvisosModule({root,store:avisosStore,say,
+    title: text => { if($(".brand-title")) $(".brand-title").textContent=text; },
+    beginCapture: async (recordId,camera) => {
+      const pending=await vault.get("capture-pending"),captureId=crypto.randomUUID();
+      await vault.write("meta","cameraResult",null);restored=null;
+      await vault.put("capture-pending",{...pending,id:"capture-pending",kind:"capture",ownerType:"aviso",captureId,recordId,source:camera?"camera":"gallery",completed:false});
+      return captureId;
+    },finishCapture,
+  });
+  if(id) await avisosModule.openDraft(id); else await avisosModule.open();
+}
+async function prepareAvisosLeave() {
+  if(screen==="avisos") await avisosModule.prepareLeave();
 }
 function globalRecords() {
   setScreen("records");
@@ -141,7 +164,7 @@ function codeMatch(startView="search") {
         const code=$("#codematchFrame").contentDocument.querySelector("#recordCode").value;
         const record=await cmStore.get("records",code),pending=await vault.get("capture-pending");
         await vault.write("meta","cameraResult",null);restored=null;
-        await vault.put("capture-pending",{...pending,id:"capture-pending",kind:"capture",recordId:record.id,completed:false});
+        await vault.put("capture-pending",{...pending,id:"capture-pending",kind:"capture",ownerType:"code",recordId:record.id,completed:false});
       }
       return nativePhotos(camera);
     },
@@ -163,7 +186,7 @@ async function prepareCodeMatchLeave(){
 }
 function settings() {
   setScreen("settings");
-  root.innerHTML = `<h1>Ajustes</h1><section class="card"><h2>Copias y recuperación</h2><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión se instala aparte. No modifica ni migra datos de instalaciones anteriores. Solo recupera copias cifradas de esta entrega.</p></section><section class="card"><h2>Acceso local</h2><p>Recuperación de contraseña y Recordarme pendientes.</p>${button("lockSettings", "Bloquear acceso")}</section><p class="build-label">QCS Prueba CodeMatch · 0.1.4 · Diseño 02/10/2026</p>`;
+  root.innerHTML = `<h1>Ajustes</h1><section class="card"><h2>Copias y recuperación</h2><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión se instala aparte. No modifica ni migra datos de instalaciones anteriores. Solo recupera copias cifradas de esta entrega.</p></section><section class="card"><h2>Acceso local</h2><p>Recuperación de contraseña y Recordarme pendientes.</p>${button("lockSettings", "Bloquear acceso")}</section><p class="build-label">QCS en desarrollo · Base 0.1.4 · Avisos en preparación</p>`;
   $("#lockSettings").onclick = () => $("#lock").click();
   $("#restore").onclick = () => $("#backupFile").click();
   $("#backupFile").onchange = (e) =>
@@ -331,6 +354,7 @@ async function addPhotos(camera) {
       ...pending,
       id: "capture-pending",
       kind: "capture",
+      ownerType: "code",
       recordId: editing.id,
       completed: false,
     });
@@ -634,7 +658,7 @@ async function exportExcel() {
 async function restorePreview(file) {
   if (!file) return;
   const backup = JSON.parse(await file.text());
-  root.innerHTML = `<h1>Recuperar copia cifrada QCS</h1><p>Solo añade códigos nuevos. No sustituye ni borra los existentes.</p>${field("backupPassword", "Contraseña de la copia", "", "password")}${button("inspectBackup", "Comprobar copia", true)} ${button("cancelBackup", "Cancelar")}`;
+  root.innerHTML = `<h1>Recuperar copia cifrada QCS</h1><p>Solo añade registros nuevos. No sustituye ni borra los existentes.</p>${field("backupPassword", "Contraseña de la copia", "", "password")}${button("inspectBackup", "Comprobar copia", true)} ${button("cancelBackup", "Cancelar")}`;
   $("#cancelBackup").onclick = home;
   $("#inspectBackup").onclick = () =>
     run(async () => {
@@ -642,8 +666,9 @@ async function restorePreview(file) {
         existing = await vault.list(),
         ids = new Set(existing.map((v) => v.id)),
         codes = new Set(records.map((v) => v.code)),
-        fresh = all.filter((v) => ["code","codematch"].includes(v.kind) && !ids.has(v.id));
+        fresh = all.filter((v) => ["code","codematch","aviso"].includes(v.kind) && !ids.has(v.id));
       for (const v of fresh) {
+        if(v.kind==="aviso"){if(!["internal","provider","customer"].includes(v.type)||!Array.isArray(v.photos)||!v.createdAt)throw Error("Borrador de aviso incompatible.");continue;}
         if(v.kind==="codematch"){if(!v.store||!v.value)throw Error("Copia incompatible.");continue;}
         if (!v.code || !Array.isArray(v.photos) || codes.has(v.code))
           throw Error(
@@ -651,13 +676,13 @@ async function restorePreview(file) {
           );
         codes.add(v.code);
       }
-      root.innerHTML = `<h1>Copia comprobada</h1><p>${fresh.length} códigos nuevos; ${all.filter((v) => v.kind === "code").length - fresh.length} ya existentes, sin sustituir.</p>${button("applyBackup", "Añadir códigos de la copia", true)} ${button("cancelBackup", "Cancelar")}`;
+      root.innerHTML = `<h1>Copia comprobada</h1><p>${fresh.length} registros nuevos; ${all.filter(v=>["code","codematch","aviso"].includes(v.kind)).length-fresh.length} ya existentes, sin sustituir.</p>${button("applyBackup", "Añadir registros de la copia", true)} ${button("cancelBackup", "Cancelar")}`;
       $("#cancelBackup").onclick = home;
       $("#applyBackup").onclick = () =>
         run(async () => {
           if (
             !confirm(
-              "¿Añadir los códigos comprobados? Los existentes no cambian.",
+              "¿Añadir los registros comprobados? Los existentes no cambian.",
             )
           )
             return;
@@ -685,6 +710,12 @@ async function recoverPhoto() {
   const record = await vault.get(pending.recordId);
   if (!record) throw Error("La ficha de origen no está disponible.");
   if (!confirm("¿Añadir la captura recuperada a su ficha guardada?")) return;
+  if(pending.ownerType==="aviso") {
+    const photo=await evidencePhoto(await (await fetch(result.webPath)).blob(),pending.source||"camera","Captura recuperada");
+    if(pending.captureId)photo.id=pending.captureId+":0";
+    await avisosStore.addPhotos(record,[photo]);await finishCapture();await openAvisos(record.id);avisosModule.step=2;avisosModule.renderEditor();
+    say("Captura recuperada y guardada en el borrador de aviso.");return;
+  }
   const photo = await reduced(await (await fetch(result.webPath)).blob());
   const next=structuredClone(record);
   next.photos=[...(next.photos || []),{...photo,id:crypto.randomUUID(),label:"",comment:"",at:new Date().toISOString()}];
@@ -802,6 +833,9 @@ async function previewImport(file) {
 }
 $("#back").onclick = () =>
   run(async () => {
+    if (screen === "avisos") {
+      if(!await avisosModule.goBack()){await refresh();home();}return;
+    }
     if (screen === "codematch") {
       const handled=await $("#codematchFrame").contentWindow.qcsCodeMatch?.goBack();
       if(!handled){await refresh();home();}return;
@@ -815,6 +849,7 @@ $("#lock").onclick = () =>
   run(async () => {
     if (screen === "editor") await save();
     await prepareCodeMatchLeave();
+    await prepareAvisosLeave();
     vault.lock();
     login();
     say("Acceso bloqueado.");
@@ -823,6 +858,7 @@ async function navigateTo(destination) {
   if (screen === "login") return;
   if (screen === "editor") await save();
   await prepareCodeMatchLeave();
+  await prepareAvisosLeave();
   await refresh();
   if (destination === "home") home();
   else if (destination === "settings") settings();

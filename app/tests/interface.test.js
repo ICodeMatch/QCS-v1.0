@@ -25,4 +25,11 @@ test('acceso mínimo de ocho, nombre del módulo y regreso a Inicio desde CodeMa
  $('[data-nav="home"]').click();await until(()=>$('#open'));
  $('[data-nav="records"]').click();await until(()=>document.body.dataset.screen==='records');assert.equal($('#codematchFrame'),null);assert.match($('#app').textContent,/pendiente/);$('#back').click();await until(()=>$('#open'));
  $('#lock').click();await until(()=>$('#password'));$('#password').value='12345678';$('#enter').click();await until(()=>$('#open'));
+ $('#openAvisos').click();await until(()=>$('[data-av-type="provider"]'));$('[data-av-type="provider"]').click();await until(()=>$('#avProblem'));
+ $('#avProblem').value='Problema de prueba';$('#avProblem').dispatchEvent(new window.Event('input'));$('#avNext').click();await until(()=>$('#avGallery'));
+ $('#back').click();await until(()=>$('#avProblem'));assert.equal($('#avProblem').value,'Problema de prueba');
+ $('[data-nav="home"]').click();await until(()=>$('#openAvisos'));$('#openAvisos').click();await until(()=>$('#avMonitor'));$('#avMonitor').click();await until(()=>$('[data-av-open]'));
+ $('[data-av-open]').click();await until(()=>$('#avProblem'));assert.equal($('#avProblem').value,'Problema de prueba');
+ $('[data-nav="settings"]').click();await until(()=>$('#backup'));assert.equal($('#avProblem'),null);
+
 });

@@ -1,0 +1,166 @@
+:root {
+  font-family: system-ui, sans-serif;
+  color: #123b52;
+  background: #f3f6f8;
+  font-size: 17px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+header {
+  background: #123b52;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+header strong {
+  flex: 1;
+  font-size: 25px;
+}
+.logo {
+  display: inline-grid;
+  place-items: center;
+  background: #138b62;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: white;
+}
+main {
+  max-width: 1050px;
+  margin: auto;
+  padding: 20px;
+}
+h1 {
+  font-size: 27px;
+}
+h2 {
+  font-size: 21px;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1px solid #c4d0d6;
+  border-radius: 10px;
+  background: white;
+  color: #123b52;
+  cursor: pointer;
+}
+button.primary {
+  background: #087e8b;
+  color: white;
+  border-color: #087e8b;
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+input,
+select,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #a9bac3;
+  border-radius: 8px;
+  background: white;
+  margin: 6px 0 16px;
+}
+label {
+  display: block;
+}
+input[type="checkbox"] {
+  display: inline;
+  width: auto;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.card,
+fieldset {
+  background: white;
+  border: 1px solid #d1dde3;
+  border-radius: 14px;
+  padding: 18px;
+  margin: 14px 0;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+.muted {
+  color: #526b78;
+}
+.badge {
+  display: inline-block;
+  border-radius: 7px;
+  padding: 5px 9px;
+  background: #e8f0f2;
+  font-size: 14px;
+}
+.photo img {
+  width: 100%;
+  height: 170px;
+  object-fit: contain;
+  background: #f5f5f5;
+}
+.sum {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.sum input {
+  min-width: 0;
+}
+#status {
+  background: #123b52;
+  color: white;
+  margin: 0;
+  padding: 12px 20px;
+  position: sticky;
+  bottom: 0;
+  min-height: 44px;
+}
+.error {
+  color: #a12525;
+}
+dialog {
+  max-width: 95vw;
+  width: 650px;
+  border: 0;
+  border-radius: 16px;
+}
+dialog::backdrop {
+  background: #123b5277;
+}
+a {
+  color: #087e8b;
+}
+small {
+  display: block;
+}
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #e5a914;
+}
+pre {
+  white-space: pre-wrap;
+}

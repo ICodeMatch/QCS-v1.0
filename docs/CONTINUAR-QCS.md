@@ -3,7 +3,10 @@ Actualizado 2026-10-02: contratos provisionales y fotos de referencia CodeMatch.
 Repositorio: https://github.com/ICodeMatch/QCS-v1.0
 Hilo central: https://github.com/ICodeMatch/QCS-v1.0/issues/1
 
-## Actualización vigente 2026-10-02: fotos de referencia y contratos entregados
+## Actualización vigente: contratos v0.2 y B6
+[18 — Contratos v0.2 y B6 revisado](18-contratos-v0.2-y-b6-revisado.md) incorpora revisión R-1..19 y correcciones de flujos B6, sin informe sensible. Prevalece sobre16 en ajustes concretos.173 casos hipotéticos, no ejecutadosQCS. ChatGPT contratos específicos/parser/motores; Claude revisión puntual/pantallasB5, sin duplicar cálculos. Privacidad: usuario acordó no publicar hallazgos sensibles; informe17 NO publicado.
+
+## Actualización anterior: fotos de referencia y contratos entregados
 [16 — Contratos B0/B7a v0.1](../docs/16-contratos-b0-b7a-v0.1.md) entregados por ChatGPT para revisión. B0 protocolo de preservación; B7a servicios locales. No auditoría independiente, implementación ni prueba; contraste fuentes/PIN/restauración, parser/motores/adaptadores pendientes.
 Cambio CONFIRMADO usuario: CodeMatch biblioteca/ficha admite VARIAS fotos de pieza real desde cámara/galería, vistas sin límite de una/cuatro. Guardar copia reducida/comprimida suficiente para ver pieza. No contorno, medición, aprendizaje ni identificación automática.
 Prevalece sobre “retirar toda cámara/fotos” en documentos anteriores: retirar análisis/experimental, conservar captura/galería de referencia. T-CAM-01 ya no exige cero capture en todo CodeMatch. R-13 activo con lista de vistas; conservar fotos existentes. Compresión no se traslada a evidencias Avisos/Homologaciones.

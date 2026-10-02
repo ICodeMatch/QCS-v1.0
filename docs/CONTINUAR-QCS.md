@@ -13,6 +13,9 @@ Capacidad Cp/Cpk,Pp/Ppk,Cm/Cmk, métodos visibles, importación y validación in
 Mejora PDCA/8D, causa raíz verificada, acciones/calendario/equipo/vínculos; FAC como propuesta propia, no procedimiento aprobado.
 SharePoint y permisos requieren configuración y prueba real. No contratar servicios adicionales.
 
+## Validaciones independientes nuevas
+[20 — CAP-S2](20-validacion-capacidad-cap-s2.md) y [21 — CAP-S3](21-validacion-capacidad-cap-s3.md): esperados ejecutados fuera de QCS, datos sintéticos; no prueba del motor/app. Cubren global/agrupada, subgrupos variables/singletons/constantes y criterio aplicado antes de redondear. B5 completo aún no recibido en chat; últimas entregas generales fueron cabeceras, no cuerpos.
+
 ## Entregas generales
 - [Contratos comunes v0.1](16-contratos-b0-b7a-v0.1.md), propuestas documentales.
 - [Ajustes v0.2 y B6](18-contratos-v0.2-y-b6-revisado.md).

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#086c8d">
+  <meta name="description" content="Catálogo técnico local y progresivo de piezas">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' blob: data:; connect-src 'self' blob:; img-src 'self' blob: data:; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; style-src 'self'; script-src 'self'">
+  <title>CodeMatch · QCS</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="unlocked"><header class="topbar">
+    <button class="brand" data-view="search" aria-label="Inicio">CodeMatch</button>
+    <div class="top-actions"><button id="storageBtn" class="status-chip" title="Almacenamiento local">▣ <span>Local</span></button><button id="menuBtn" class="icon-btn" aria-label="Menú">☰</button></div>
+  </header>
+
+  <main>
+    <section id="searchView" class="view active">
+      <div class="page-head"><div><p class="eyebrow">CATÁLOGO TÉCNICO LOCAL</p><h1>Identificar una pieza</h1></div><div class="catalog-stat"><strong id="recordCount">0</strong><span>códigos</span></div></div>
+      <form id="searchForm" class="panel search-panel">
+        <label class="wide measure-mode">Medidas que vas a introducir<select id="measureMode"><option value="developed">Pieza desarrollada</option><option value="folded">Pieza plegada</option></select></label>
+        <label class="wide">Código o denominación<input id="searchText" type="search" placeholder="Escribe parte del código o nombre" autocomplete="off"></label>
+        <div class="measure-input"><label>Largo (mm)<input id="searchLength" type="text" inputmode="decimal" placeholder="Opcional"></label><button class="calc-btn" data-calc-target="searchLength" type="button">∑ Sumar cotas</button></div>
+        <div class="measure-input"><label>Ancho (mm)<input id="searchWidth" type="text" inputmode="decimal" placeholder="Opcional"></label><button class="calc-btn" data-calc-target="searchWidth" type="button">∑ Sumar cotas</button></div>
+        <details class="wide test-guide"><summary>Más filtros de ficha</summary><div class="form-grid"><label>Alto (mm)<input id="searchHeight" type="text" inputmode="decimal" placeholder="Opcional"></label><label>Espesor (mm)<input id="searchThickness" type="text" inputmode="decimal" placeholder="Opcional"></label><label>Material<input id="searchMaterial" placeholder="Opcional"></label><label>Mano<select id="searchHand"><option value="">Cualquiera</option><option>Derecha</option><option>Izquierda</option></select></label><label>Revisión<input id="searchRevision" placeholder="Ej. Rev.06"></label></div></details>
+        <div class="tolerance wide"><label>Tolerancia de búsqueda (± mm)<input id="searchTolerance" type="text" min="0" max="1000" value="5" inputmode="decimal"></label><div class="quick-tolerance"><button type="button" data-tol="1">±1</button><button type="button" data-tol="3">±3</button><button type="button" data-tol="5">±5</button><button type="button" data-tol="10">±10</button><button type="button" data-tol="20">±20</button></div></div>
+        <button class="primary" type="submit">Identificar coincidencias</button>
+        <button id="clearSearch" class="secondary" type="button">Limpiar filtros</button>
+      </form>
+      <div id="searchMessage" class="message"></div><div id="results" class="results"></div>
+    </section>
+
+    <section id="importView" class="view">
+      <button class="view-back" type="button" data-back>← Volver</button>
+      <div class="page-head"><div><p class="eyebrow">CATÁLOGO BASE</p><h1>Importar Excel</h1></div></div>
+      <article class="panel">
+        <h2>Archivo de origen</h2><p>Selecciona el Excel o CSV con los códigos. Se guardará una copia dentro de esta aplicación y podrá leerse sin conexión.</p>
+        <label class="dropzone"><input id="excelInput" type="file" accept=".xlsx,.csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv"><span>⇧</span><strong>Elegir Excel XLSX o CSV</strong><small>El original no se modifica</small></label>
+        <div id="sourceInfo" class="source-info empty">Todavía no hay ningún Excel importado.</div>
+      </article>
+      <article id="mappingPanel" class="panel hidden"><h2>Relacionar columnas</h2><p>Comprueba qué columna corresponde a cada dato. Solo el código es obligatorio.</p><div id="mappingFields" class="mapping-grid"></div><div id="importPreview" class="table-wrap"></div><button id="confirmImport" class="primary full">Importar catálogo</button></article>
+      <article class="panel"><h2>Actualizaciones seguras</h2><p>Al importar una versión nueva del Excel se actualizan los datos de origen, pero se conservan fotografías, planos, miniaturas, medidas plegadas, material, espesor y notas añadidas manualmente.</p></article>
+    </section>
+
+    <section id="libraryView" class="view">
+      <button class="view-back" type="button" data-back>← Volver</button>
+      <div class="page-head"><div><p class="eyebrow">BIBLIOTECA PROGRESIVA</p><h1>Referencias</h1></div><button id="newRecordBtn" class="secondary">＋ Nueva</button></div>
+      <div class="panel filters"><input id="libraryFilter" type="search" placeholder="Filtrar por código o denominación"><select id="completionFilter"><option value="all">Todas las fichas</option><option value="excel">Solo datos del Excel</option><option value="photos">Con fotografías</option><option value="plans">Con planos</option><option value="thumbnail-missing">Sin miniatura</option><option value="complete">Datos ampliados</option></select></div>
+      <div id="libraryList" class="results"></div>
+    </section>
+
+    <section id="plansView" class="view">
+      <button class="view-back" type="button" data-back>← Volver</button>
+      <div class="page-head"><div><p class="eyebrow">ARCHIVOS TÉCNICOS</p><h1>Planos y miniaturas</h1></div></div>
+      <article class="panel plan-actions"><div class="button-row"><label class="secondary file-btn">＋ Elegir archivos técnicos<input id="bulkPlansInput" type="file" accept="application/pdf,image/*,.dxf,.dwg,.step,.stp,.iges,.igs,.stl,.svg,.tif,.tiff,.webp" multiple></label></div><button id="generatePending" class="primary">Generar miniaturas compatibles</button></article>
+      <article class="panel format-note"><strong>Formatos admitidos para guardar</strong><p>PDF, fotografías, DXF, DWG, STEP/STP, IGES/IGS, STL, SVG, TIFF y WEBP. En esta versión se crean miniaturas de PDF, imágenes y DXF ASCII; los demás se conservan intactos y se indican como «sin vista previa».</p></article>
+      <div class="plan-stats"><div><strong id="planCount">0</strong><span>planos</span></div><div><strong id="thumbCount">0</strong><span>con miniatura</span></div><div><strong id="pendingCount">0</strong><span>pendientes</span></div></div>
+      <div id="planList" class="results"></div>
+    </section>
+
+    <section id="backupView" class="view">
+      <button class="view-back" type="button" data-back>← Volver</button>
+      <div class="page-head"><div><p class="eyebrow">SEGURIDAD</p><h1>Datos y copias</h1></div></div>
+      <article class="panel"><h2>Almacenamiento</h2><p>Los datos se guardan cifrados en este dispositivo bajo el acceso local de QCS. Las copias y archivos se guardan donde tú elijas.</p><div id="storageUsage" class="source-info"></div></article>
+      <article class="panel"><h2>Exportación para Excel</h2><p>Crea un archivo XLSX con el catálogo y los datos añadidos. Las fotografías y los planos no se introducen dentro del Excel.</p><button id="exportExcel" class="primary full">Exportar datos a Excel</button></article>
+      <article class="panel"><h2>Copia de seguridad</h2><p>Exporta el catálogo enriquecido. Los archivos grandes se incluyen; la creación puede tardar.</p><div class="button-row"><button id="qcsBackup" class="primary">Copias y recuperación QCS</button></div></article>
+      </section>
+  </main>
+
+  <nav class="bottom-nav"><button class="active" data-view="search"><span>⌕</span>Identificar</button><button data-view="library"><span>▦</span>Biblioteca</button><button data-view="plans"><span>▤</span>Planos</button><button data-view="import"><span>⇧</span>Excel</button></nav>
+
+  <dialog id="recordDialog"><button class="close" data-close="recordDialog">×</button><form id="recordForm" class="dialog-body"><p class="eyebrow">FICHA DE PIEZA</p><h2 id="recordTitle">Completar referencia</h2><input id="recordId" type="hidden"><div class="form-grid"><label>Código<input id="recordCode" required></label><label>Denominación<input id="recordName"></label><fieldset><legend>Pieza desarrollada</legend><label>Largo máximo (mm)<input id="developedLength" type="text" inputmode="decimal"></label><label>Ancho máximo (mm)<input id="developedWidth" type="text" inputmode="decimal"></label></fieldset><fieldset><legend>Pieza plegada</legend><label>Largo máximo (mm)<input id="foldedLength" type="text" inputmode="decimal"></label><label>Ancho máximo (mm)<input id="foldedWidth" type="text" inputmode="decimal"></label><label>Alto máximo (mm)<input id="foldedHeight" type="text" inputmode="decimal"></label></fieldset><label>Espesor (mm)<input id="thickness" type="text" inputmode="decimal"></label><label>Material<input id="material" list="materials" placeholder="Acero, inoxidable, aluminio…"><datalist id="materials"><option>Acero</option><option>Acero inoxidable</option><option>Aluminio</option><option>Acero galvanizado</option></datalist></label><label class="wide">Notas<textarea id="recordNotes" rows="3"></textarea></label></div><div class="attachment-block"><h3>Fotografías de referencia</h3><div class="photo-guide"><strong>Para que la forma se reconozca mejor</strong><ul><li>Que aparezca la pieza completa, sin cortar extremos.</li><li>Usa buena luz y un fondo que contraste con la chapa.</li><li>Procura que se distingan bordes, agujeros y pliegues.</li><li>No hace falta una fotografía perfecta: evita únicamente desenfoques fuertes.</li></ul><small>Las imágenes se reducen y comprimen automáticamente para ocupar poco espacio.</small></div><div id="isoPhotoSlots" class="iso-photo-grid"></div><div class="button-row"><button id="extraCamera" type="button" class="secondary">Hacer otra foto</button><button id="extraGallery" type="button" class="secondary">Añadir de galería</button><input id="extraPhotoInput" class="hidden" type="file" accept="image/*" multiple></div><div id="piecePhotoList" class="thumb-grid legacy-photos"></div></div><div class="attachment-block"><h3>Planos</h3><div class="camera-pair"><label class="secondary file-btn">＋ Elegir archivos técnicos<input id="recordPlans" type="file" accept="application/pdf,image/*,.dxf,.dwg,.step,.stp,.iges,.igs,.stl,.svg,.tif,.tiff,.webp" multiple></label></div><div id="recordPlanList" class="thumb-grid"></div></div><button class="primary full" type="submit">Guardar ficha</button></form></dialog>
+
+  <dialog id="assignDialog"><button class="close" data-close="assignDialog">×</button><div class="dialog-body"><p class="eyebrow">ASOCIAR PLANO</p><h2 id="assignFileName">Archivo</h2><label>Código de la referencia<input id="assignSearch" list="codeList" placeholder="Escribe o selecciona un código"><datalist id="codeList"></datalist></label><input id="assignAttachmentId" type="hidden"><button id="confirmAssign" class="primary full">Guardar asociación</button></div></dialog>
+
+  <dialog id="menuDialog"><button class="close" data-close="menuDialog">×</button><div class="dialog-body"><p class="eyebrow">MENÚ</p><h2>CodeMatch · QCS Prueba</h2><div class="menu-list"><button data-view="search">⌕ Identificar una pieza</button><button data-view="import">⇧ Importar o actualizar Excel</button><button data-view="library">▦ Biblioteca de referencias</button><button data-view="plans">▤ Planos y miniaturas</button><button data-view="backup">◈ Datos y copias</button></div><div class="security-note"><strong>Sin conexión exterior</strong><p>Esta aplicación no contiene direcciones de servidores ni realiza peticiones de red. El acceso a archivos siempre requiere tu selección.</p></div></div></dialog>
+
+  <dialog id="storageDialog"><button class="close" data-close="storageDialog">×</button><div class="dialog-body"><p class="eyebrow">ALMACENAMIENTO LOCAL</p><h2>Datos en este dispositivo</h2><p>Los datos se guardan cifrados en este dispositivo bajo el acceso local de QCS. Las copias y archivos se guardan donde tú elijas.</p><p>Android no permite que una web gestione libremente carpetas del móvil: tú eliges cada archivo. Dentro de CodeMatch quedan organizados por referencia y tipo.</p><button class="secondary full" data-view="backup">Ver datos y copias</button></div></dialog>
+  <dialog id="foldCalcDialog"><button class="close" data-close="foldCalcDialog">×</button><div class="dialog-body"><p class="eyebrow">CALCULADORA DE PLEGADO</p><h2 id="foldCalcTitle">Sumar cotas</h2><p class="calc-help">Introduce las medidas consecutivas de los tramos visibles de la pieza plegada. El total se utilizará como medida desarrollada aproximada.</p><div id="foldCotaList" class="cota-list fixed-eight"></div><div class="calc-total"><span>Total aproximado</span><strong id="foldCalcTotal">0 mm</strong></div><div class="button-row"><button id="clearCotasBtn" class="secondary" type="button">Borrar cotas</button><button id="applyCotasBtn" class="primary" type="button">Usar este total</button></div><p class="calc-warning">La suma simple no contempla radios, fibra neutra ni descuentos de plegado. Utiliza una tolerancia suficiente y confirma después el plano.</p></div></dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="vendor/jszip.min.js"></script><script type="module" src="app.js"></script>
+</body>
+</html>

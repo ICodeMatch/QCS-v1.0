@@ -63,26 +63,70 @@ jobs:
           await page.goto('http://127.0.0.1:8080');
           await page.locator('#password').waitFor();
           await page.screenshot({path:'previews/01-acceso.png',fullPage:true});
-          await page.locator('#password').fill('contraseña de prueba visual');
+          await page.locator('#password').fill('1234567');
+          await page.locator('#enter').click();
+          await page.locator('#status').filter({hasText:'al menos 8'}).waitFor();
+          await page.locator('#password').fill('12345678');
           await page.locator('#enter').click();
           await page.locator('#open').waitFor();
           await page.screenshot({path:'previews/02-inicio.png',fullPage:true});
           if(await page.locator('.module-card').count()!==5) throw Error('Inicio incompleto');
-          if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error('Desbordamiento horizontal');
+          await page.getByText('Herramientas de calidad',{exact:true}).waitFor();
           await page.locator('#open').click();
-          await page.locator('#measure').click();
+          const cm=page.frameLocator('#codematchFrame');
+          await cm.locator('#recordCount').waitFor();
+          await page.waitForFunction(()=>document.querySelector('#codematchFrame')?.contentWindow.qcsCodeMatch?.ready);
           await page.screenshot({path:'previews/03-codematch.png',fullPage:true});
-          await page.locator('#sum').click();
+          await cm.locator('[data-calc-target="searchLength"]').click();
+          if(await cm.locator('#foldCotaList input').count()!==8) throw Error('Sumatorio incompleto');
+          await cm.locator('[data-cota-index="0"]').fill('1,005');
+          await cm.locator('[data-cota-index="1"]').fill('2');
           await page.screenshot({path:'previews/04-sumatorio.png',fullPage:true});
-          if(await page.locator('dialog input').count()!==8) throw Error('Sumatorio incompleto');
+          await cm.locator('#applyCotasBtn').click();
+          if(await cm.locator('#searchLength').inputValue()!=='3,005') throw Error('Suma no aplicada al campo histórico');
+          // Header Back closes a dialog, returns through module screens and reaches QCS Inicio.
+          for(const view of ['library','plans','import']){
+            await cm.locator('.bottom-nav [data-view="'+view+'"]').click();
+            await cm.locator('#'+view+'View.active').waitFor();
+            await page.locator('#back').click();
+            await cm.locator('#searchView.active').waitFor();
+          }
+          await cm.locator('.bottom-nav [data-view="library"]').click();
+          await cm.locator('#newRecordBtn').click();
+          await cm.locator('#recordCode').fill('PRUEBA-001');
+          await cm.locator('#recordName').fill('Referencia de prueba');
+          await cm.locator('#developedLength').fill('5,6');
+          await page.locator('#back').click();
+          await cm.locator('#recordDialog').waitFor({state:'hidden'});
+          await cm.locator('[data-edit="PRUEBA-001"]').waitFor();
+          await cm.locator('[data-edit="PRUEBA-001"]').click();
+          if(await cm.locator('#recordName').inputValue()!=='Referencia de prueba') throw Error('Ficha no conservada al volver');
+          await page.locator('#back').click();
+          await page.locator('#back').click();
+          await cm.locator('#clearSearch').click();
+          await cm.locator('#searchLength').fill('5,7');
+          await cm.locator('#searchTolerance').fill('0,1');
+          await cm.locator('#searchForm button[type="submit"]').click();
+          await cm.locator('#results h2').filter({hasText:'Coincidencia · 1'}).waitFor();
+          await page.locator('#back').click();
+          await page.locator('#open').waitFor();
+          await page.locator('[data-nav="records"]').click();
+          await page.waitForFunction(()=>document.querySelector('#codematchFrame')?.contentWindow.qcsCodeMatch?.ready);
+          await cm.locator('#libraryView.active').waitFor();
+          await page.locator('#settingsTop').click();
+          await page.locator('#backup').waitFor();
+          await page.locator('[data-nav="home"]').click();
+          await page.locator('#open').waitFor();
+          if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)) throw Error('Desbordamiento horizontal');
           await browser.close();
           if(errors.length) throw Error(errors.join('\n'));
           JS
       - name: Guardar APK y vistas
         uses: actions/upload-artifact@v4
         with:
-          name: QCS-Prueba-Diseno-0.1.2
+          name: QCS-Prueba-Diseno-0.1.3
           path: |
             app/android/app/build/outputs/apk/debug/*.apk
             app/previews/*.png
           if-no-files-found: error
+

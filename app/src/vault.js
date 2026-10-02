@@ -78,7 +78,7 @@ export class Vault {
   async unlock(password) {
     let m = await this.read("meta", "access");
     if (!m) {
-      if (password.length < 12) throw new Error("Usa al menos 12 caracteres.");
+      if (password.length < 8) throw new Error("Usa al menos 8 caracteres.");
       const salt = crypto.getRandomValues(new Uint8Array(16)),
         key = await derive(password, salt);
       m = { salt: b64(salt), check: await seal(key, { check: "QCS" }) };
@@ -134,6 +134,24 @@ export class Vault {
         );
     });
     value._revision = revision;
+  }
+  async putMany(values) {
+    const staged = await Promise.all(values.map(async v => {
+      const revision=(v._revision || 0)+1;
+      return {id:v.id, expected:v._revision || 0, row:{...(await seal(this.key,{...v,_revision:revision})),revision}};
+    }));
+    if(new Set(staged.map(x=>x.id)).size!==staged.length) throw Error("Identificadores repetidos.");
+    await new Promise((resolve,reject)=>{
+      const tx=this.db.transaction("items","readwrite"),store=tx.objectStore("items");
+      let conflict=false;
+      for(const item of staged){const req=store.get(item.id);req.onsuccess=()=>{
+        if((req.result?.revision || 0)!==item.expected){conflict=true;tx.abort();return;}
+        store.put(item.row,item.id);
+      };}
+      tx.oncomplete=resolve;
+      tx.onabort=()=>reject(Error(conflict?"El catálogo cambió durante la importación; no se ha guardado nada.":"No se pudo guardar el catálogo."));
+      tx.onerror=()=>{};
+    });
   }
   async createMany(values) {
     const staged = await Promise.all(
@@ -219,3 +237,4 @@ export class Vault {
     this.key = null;
   }
 }
+

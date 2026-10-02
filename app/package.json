@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/main.js --bundle --format=esm --outfile=www/app.js",
+    "build": "node scripts/restore-codematch-vendor.js && esbuild src/main.js --bundle --format=esm --outfile=www/app.js",
     "test": "node --test tests/*.test.js",
     "serve": "python3 -m http.server 8080 --directory www",
     "postinstall": "node scripts/prepare-cli.js"

@@ -1,0 +1,20 @@
+import 'fake-indexeddb/auto';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {Vault} from '../src/vault.js';
+import {CodeMatchStore} from '../src/codematch-store.js';
+test('CodeMatch conserva fotos anteriores, protege actualizaciones y guarda copias cifradas',async()=>{
+ const v=new Vault();await v.open();await v.unlock('12345678');const s=new CodeMatchStore(v);
+ const r={id:'old',kind:'code',code:'001',name:'Pieza',photos:[{id:'p',data:'data:image/jpeg;base64,AA=='}],plans:[]};await v.put(r.id,r);
+ assert.equal((await s.all('attachments')).length,1);
+ await s.bulkPutRecords([{code:'001',name:'Actualizada',developedLength:'5,6'},{code:'002',name:'Nueva'}]);
+ assert.equal((await v.get('old')).photos.length,1);assert.equal((await v.get('old')).history[0].previous.name,'Pieza');
+ await assert.rejects(()=>s.bulkPutRecords([{code:'003'},{code:'003'}]));assert.equal(await s.get('records','003'),undefined);
+ const stale=await s.get('records','001');await s.put('records',{...stale,name:'Guardada'});await assert.rejects(()=>s.put('records',{...stale,name:'Vieja'}));
+ const a=(await s.all('attachments'))[0];await s.retireAttachment(a);
+ assert.equal((await s.all('attachments')).length,0);assert.equal((await v.get('old')).retiredAttachments.length,1);
+ await s.put('attachments',{id:'new-photo',recordCode:'001',kind:'photo',data:'data:image/jpeg;base64,AA=='});
+ const backup=await v.backup();assert(!JSON.stringify(backup).includes('Guardada'));
+ assert((await v.inspectBackup(backup,'12345678')).some(x=>x.kind==='codematch'));
+ v.db.close();
+});

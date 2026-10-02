@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">QCS Prueba</string>
-    <string name="title_activity_main">QCS Prueba</string>
-    <string name="package_name">com.qualitycontrol.suite.stage1</string>
-    <string name="custom_url_scheme">com.qualitycontrol.suite.stage1</string>
+    <string name="app_name">QCS Prueba Diseño</string>
+    <string name="title_activity_main">QCS Prueba Diseño</string>
+    <string name="package_name">com.qualitycontrol.suite.stage1design</string>
+    <string name="custom_url_scheme">com.qualitycontrol.suite.stage1design</string>
 </resources>

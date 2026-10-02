@@ -1,6 +1,6 @@
 {
-  "appId": "com.qualitycontrol.suite.stage1",
-  "appName": "QCS Prueba",
+  "appId": "com.qualitycontrol.suite.stage1design",
+  "appName": "QCS Prueba Diseño",
   "webDir": "www",
   "server": { "androidScheme": "https" }
 }

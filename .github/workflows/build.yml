@@ -28,6 +28,11 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools'
+      - name: Conservar firma de las pruebas de diseño
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: qcs-prueba-diseno-debug-keystore-v1
       - name: Comprobar y preparar app
         working-directory: app
         run: |
@@ -76,7 +81,7 @@ jobs:
       - name: Guardar APK y vistas
         uses: actions/upload-artifact@v4
         with:
-          name: QCS-Prueba-0.1.1
+          name: QCS-Prueba-Diseno-0.1.2
           path: |
             app/android/app/build/outputs/apk/debug/*.apk
             app/previews/*.png

@@ -4,7 +4,7 @@ android {
     namespace "com.qualitycontrol.suite.stage1"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.qualitycontrol.suite.stage1design"
+        applicationId "com.qualitycontrol.suite.stage1layout"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 4

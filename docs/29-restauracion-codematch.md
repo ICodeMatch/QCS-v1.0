@@ -9,8 +9,9 @@ CodeMatch se integra en QCS bajo un único acceso local. El adaptador reutiliza 
 
 Volver funciona mediante una pila de pantallas y cierre de diálogos; el botón de cabecera y Atrás Android comparten el recorrido. Las fichas editadas se guardan antes de salir; un fallo detiene la navegación y no anuncia éxito. Biblioteca/Planos/Excel regresan a Identificar y desde allí a Inicio QCS.
 
-Versión prevista 0.1.3, versionCode 4; conserva applicationId com.qualitycontrol.suite.stage1design y firma de prueba mediante caché existente. Antes de entregar verificar certificado igual al APK 0.1.2 para evitar conflicto de actualización. No desinstalar aplicaciones con datos.
+Versión 0.1.3, versionCode 4. La comprobación detectó que la caché de firma 0.1.2 nunca se guardó (Path Validation Error). Su clave privada desapareció con el runner; no es posible actualizar ese paquete con otra clave.
+Se prepara una última variante separada QCS Prueba CodeMatch, applicationId com.qualitycontrol.suite.stage1layout. No desinstalar aplicaciones con datos. Firma de entrega estable conservada fuera del repositorio en Library; las siguientes APK de este identificador deben firmarse con esa misma clave. CI entrega el APK y apksigner.jar; la firma definitiva de prueba se aplica localmente antes de entregar. La clave no se sube a GitHub ni se incluye en la APK.
 
 ## Validación pendiente de cierre
-Pruebas locales pasan. Se añaden recorridos de navegador reales para 7 caracteres rechazados/8 aceptados, suma decimal, fichas al volver, Biblioteca/Planos/Excel, Ajustes e Inicio. Compilación y renderizados por GitHub Actions; comprobar resultado antes de entregar.
+Nueve pruebas locales pasan. La compilación anterior y recorridos de navegador pasaron; las pantallas renderizadas se revisaron. Se añaden recorridos de navegador reales para 7 caracteres rechazados/8 aceptados, suma decimal, fichas al volver, Biblioteca/Planos/Excel, Ajustes e Inicio. Compilación y renderizados por GitHub Actions; comprobar resultado antes de entregar.
 Instalación, permisos/cámara y los recorridos completos en OPPO siguen pendientes. No se declara migración validada de copias antiguas v1/v2 de la aplicación habitual.

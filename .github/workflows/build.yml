@@ -28,11 +28,6 @@ jobs:
         uses: android-actions/setup-android@v3
         with:
           packages: 'platform-tools'
-      - name: Conservar firma de las pruebas de diseño
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: qcs-prueba-diseno-debug-keystore-v1
       - name: Comprobar y preparar app
         working-directory: app
         run: |
@@ -121,12 +116,19 @@ jobs:
           await browser.close();
           if(errors.length) throw Error(errors.join('\n'));
           JS
+      - name: Preparar herramienta de firma para la entrega
+        run: |
+          mkdir -p tooling
+          QCS_APKSIGNER_PATH=$(rg --files "$ANDROID_HOME/build-tools" | rg '/lib/apksigner.jar$' | sort | tail -n 1)
+          test -n "$QCS_APKSIGNER_PATH"
+          cp "$QCS_APKSIGNER_PATH" tooling/apksigner.jar
       - name: Guardar APK y vistas
         uses: actions/upload-artifact@v4
         with:
-          name: QCS-Prueba-Diseno-0.1.3
+          name: QCS-Prueba-CodeMatch-0.1.3
           path: |
             app/android/app/build/outputs/apk/debug/*.apk
             app/previews/*.png
+            tooling/apksigner.jar
           if-no-files-found: error
 

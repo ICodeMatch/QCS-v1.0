@@ -20,3 +20,10 @@ Instalación, permisos/cámara y los recorridos completos en OPPO siguen pendien
 Clave de pruebas QCS-Prueba-CodeMatch-firma.p12 conservada en Library, ID libfile_af8b3f2a0bdc81918d1c2f0042f6f11b. No subirla al repositorio ni a los artifacts de GitHub. Alias qcs-prueba-codematch. La credencial se suministra únicamente mediante entrada segura local, fuera del repositorio. Exclusivamente desarrollo, no firma empresarial.
 Certificado esperado SHA256 151f60e27b28b29fc98797366c74bd7ce27021ad3ad7bc3c1ea51fdb37127193.
 Para la siguiente entrega recuperar esa misma clave y ejecutar app/scripts/sign-test-apk.sh con apksigner.jar del artifact, clave, APK de CI y APK final. Verificar certificado antes de entregar; nunca crear una clave nueva para actualizar com.qualitycontrol.suite.stage1layout.
+
+## Entrega verificada
+Actions 36992758288, commit 54407ece368e171a0e3f9eb93c3d2f4ae7237470: nueve pruebas pasan, compilación Android, renderizado y navegación real en Chromium pasan. Pantallas de acceso, Inicio, CodeMatch y sumatorio revisadas.
+APK final QCS-Prueba-CodeMatch-0.1.3.apk: 7543397 bytes, SHA256 3b2a50e061f6da267908ddedb03eb77549d95350d1d2ba298f994bf7ca6c0aad. Firmada localmente; apksigner verifica v1/v2/v3. Certificado coincide con el SHA256 esperado. Manifest y configuración contienen com.qualitycontrol.suite.stage1layout.
+APK guardada, Library ID libfile_0689b34c3fdc8191b7e0e3bae9ad9309. Respaldo privado de firma QCS-Prueba-CodeMatch-firma-respaldo.zip, Library ID libfile_2aae914f58548191b69a6d9e4e6bfa78; recuperar ese respaldo en futuras sesiones para mantener la misma firma.
+Se instala aparte como QCS Prueba CodeMatch; no requiere desinstalar 0.1.2 ni app habitual. Las referencias creadas en 0.1.2 pueden entrar mediante su copia cifrada QCS y su contraseña; no hay migración automática ni se afirma compatibilidad validada con copias históricas v1/v2.
+Pendiente la prueba real del usuario en OPPO, especialmente cámara/galería, permisos y APK instalada. No se declara concluida toda la suite: los otros módulos siguen pendientes.

@@ -117,7 +117,7 @@ function home() {
 }
 function globalRecords() {
   setScreen("records");
-  root.innerHTML = `<h1 class="home-title">Registros</h1><p class="home-subtitle">Quality Control Suite</p><section class="panel"><h2>Registros de calidad</h2><p>Este apartado está pendiente en la versión de prueba.</p><p>Las fichas de piezas están en CodeMatch → Biblioteca.</p><span class="badge">Pendiente</span></section>`;
+  root.innerHTML = `<h1 class="home-title">Registros</h1><p class="home-subtitle">Quality Control Suite</p><section class="pending-panel"><h2>Registros de calidad</h2><p>Este apartado está pendiente en la versión de prueba.</p><p>Las fichas de piezas están en CodeMatch → Biblioteca.</p><span class="badge">Pendiente</span></section>`;
 }
 const cmStore = new CodeMatchStore(vault);
 function codeMatch(startView="search") {

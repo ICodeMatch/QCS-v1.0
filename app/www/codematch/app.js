@@ -98,7 +98,7 @@ async function goBack(){
   if(currentView!=='search'){showView('search');return true;}
   return false;
 }
-window.qcsCodeMatch={goBack:async()=>{await busy;return goBack();},prepareLeave:async()=>{await busy;return leaveRecord();},navigate};
+window.qcsCodeMatch={goBack:async()=>{await busy;return goBack();},prepareLeave:async()=>{await busy;return leaveRecord();},navigate,notify:toast};
 $$('[data-view]').forEach(b=>b.onclick=()=>navigate(b.dataset.view));
 $$('[data-back]').forEach(b=>b.onclick=async()=>{if(!await goBack())await bridge.home();});
 $$('[data-close]').forEach(b=>b.onclick=async()=>{if(b.dataset.close==='recordDialog')await leaveRecord();else $('#'+b.dataset.close).close();});

@@ -17,7 +17,10 @@ const esc = (s) =>
         c
       ],
   );
-const say = (s) => ($("#status").textContent = s);
+const say = (s) => {
+  $("#status").textContent = s;
+  if(document.body.dataset.screen === "codematch") $("#codematchFrame")?.contentWindow.qcsCodeMatch?.notify(s);
+};
 let records = [],
   editing = null,
   screen = "login",
@@ -679,9 +682,13 @@ async function recoverPhoto() {
   if (!record) throw Error("La ficha de origen no está disponible.");
   if (!confirm("¿Añadir la captura recuperada a su ficha guardada?")) return;
   const photo = await reduced(await (await fetch(result.webPath)).blob());
-  editor(record);
-  await persistPhotos([photo]);
+  const next=structuredClone(record);
+  next.photos=[...(next.photos || []),{...photo,id:crypto.randomUUID(),label:"",comment:"",at:new Date().toISOString()}];
+  await vault.put(next.id,next);
   await finishCapture();
+  await refresh();
+  codeMatch("library");
+  say("Captura recuperada y guardada en su ficha.");
 }
 function csv(s) {
   const rows = [];

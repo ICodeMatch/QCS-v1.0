@@ -1,9 +1,16 @@
 # CONTINUAR QCS — punto de entrada para nuevos chats
-Actualizado 2026-10-01 tras recepción del paquete P1 por ChatGPT. Se archiva documentación, sin modificar código/ZIP/CI.
+Actualizado 2026-10-02: contratos provisionales y fotos de referencia CodeMatch. Se archiva documentación, sin modificar código/ZIP/CI.
 Repositorio: https://github.com/ICodeMatch/QCS-v1.0
 Hilo central: https://github.com/ICodeMatch/QCS-v1.0/issues/1
 
-## Actualización vigente: B3 Homologaciones revisado
+## Actualización vigente 2026-10-02: fotos de referencia y contratos entregados
+[16 — Contratos B0/B7a v0.1](../docs/16-contratos-b0-b7a-v0.1.md) entregados por ChatGPT para revisión. B0 protocolo de preservación; B7a servicios locales. No auditoría independiente, implementación ni prueba; contraste fuentes/PIN/restauración, parser/motores/adaptadores pendientes.
+Cambio CONFIRMADO usuario: CodeMatch biblioteca/ficha admite VARIAS fotos de pieza real desde cámara/galería, vistas sin límite de una/cuatro. Guardar copia reducida/comprimida suficiente para ver pieza. No contorno, medición, aprendizaje ni identificación automática.
+Prevalece sobre “retirar toda cámara/fotos” en documentos anteriores: retirar análisis/experimental, conservar captura/galería de referencia. T-CAM-01 ya no exige cero capture en todo CodeMatch. R-13 activo con lista de vistas; conservar fotos existentes. Compresión no se traslada a evidencias Avisos/Homologaciones.
+Reparto: ChatGPT contraste B0 y contratos específicos parser/decimal/capacidad; Claude revisión flujos contra16 y B6 Mejora/proyectos/FAC, sin duplicar contratos. Coordinación por usuario, no recepción automática demostrada.
+D1–D25 siguen propuestas.150 casos previos hipotéticos, ninguno ejecutado QCS.
+
+## Actualización anterior: B3 Homologaciones revisado
 [15 — B3 y correcciones incorporadas](historico/2026-10-01/15-b3-homologaciones-corregido.md): registro normalizado del documento recibido, no copia literal/anexo. Conservar original/estructura variable y separar conformidad/completitud/aprobación; proveedores en alcance.
 Correcciones: vacío=0 solo perfil explícito; fórmula ausente no invalida por sí sola; ranura no acredita pieza; evaluación/aprobación ligadas a revisión; destinos A/B/C precisados; hash archivo distinto de firma estructural; monitor HOM-M1 ocho registros, no seis; avisos A4/A5 y recorrido/reanudación precisados.
 16 casos nuevos,150hipotéticos no aprobados ni ejecutados. B0/B7a siguen pendientes de ChatGPT. No reemitir bloque completo por correcciones incorporables.
@@ -80,7 +87,7 @@ Dispositivos empresa/autorizados para operarios, personales solo pruebas.
 
 ### CodeMatch
 Retener búsqueda medidas, catálogo Excel/CSV, planes/archivos, backups, requisito informesPDF aún no implementado.
-Retirar fotos/cámara/experimental SOLO CodeMatch, incluido Fotografiar plano. NO borrar fotos históricas por retirarUI; copia/exportación/análisis previo.
+Retirar análisis fotográfico/experimental CodeMatch, incluido Fotografiar plano como captura técnica. CONSERVAR cámara y galería en biblioteca/ficha para VARIAS fotos de referencia comprimidas; no análisis ni medición. NO borrar fotos históricas.
 Dos bloques desarrollo/plegada combinables y datos parciales; no sustituir desconocidos por0 ni inventar plegadas. Intersección Y/tolerancia común propuesta pendiente.
 Orientación invertida coherente por candidato.
 Catálogo actual ~18.000códigos con LARGO/ANCHO DESARROLLO y denominación; no confundir con ExcelHomologaciones.
@@ -120,7 +127,7 @@ Hallazgoslectura no pruebanfuncionalidad. No repetir estadosantiguos retractados
 
 ## Pendientes y siguiente trabajo concreto
 Prioridad ChatGPT, DOCUMENTACIÓN/AUDITORÍA:
-1 Leer P1 y su revisión (13) junto con v2.2 completa; v2.3 completa aún no acreditada en esta actualización. Prioridad B0 y B7a según reparto concreto. Preparar contratos aún NO ENTREGADOS:
+1 Leer P1 y su revisión (13) junto con v2.2 completa; v2.3 completa aún no acreditada en esta actualización. Prioridad B0 y B7a según reparto concreto. Contratos comunes v0.1 entregados en16; preparar/contrastar contratos específicos pendientes:
 HomologacionStore/TablaCaracteristicas/MuestraStore/ConformityRule/ExcelTemplateReader;
 FACStore/ContainmentStore/ActionStore/LinkService/ApprovalLog;
 AvisoStore/EvidenceStore/CatalogLookup/ReportGenerator/FileServiceoutbox/SearchIndex/IdentityService/NumberingService.

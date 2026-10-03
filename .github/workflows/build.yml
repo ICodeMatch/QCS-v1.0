@@ -32,11 +32,14 @@ jobs:
           QCS_WEB_PID=$!
           trap 'kill "$QCS_WEB_PID" || true' EXIT
           node scripts/check-avisos-browser.mjs
+          node scripts/check-homologaciones-browser.mjs
       - name: Guardar evidencia de revisión web
         uses: actions/upload-artifact@v4
         with:
-          name: QCS-Avisos-revision-web
-          path: app/previews/avisos/
+          name: QCS-Avisos-Homologaciones-revision-web
+          path: |
+            app/previews/avisos/
+            app/previews/homologaciones/
           if-no-files-found: error
   android:
     needs: web

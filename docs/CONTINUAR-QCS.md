@@ -47,3 +47,12 @@ El usuario confirma que se necesita la seguridad empresarial aplicable, además 
 ## APK de Avisos 0.1.5 preparada
 
 Código 71b8811be10e42566eac2a4c103048624b4c040d; Actions 37009212251. Android versionCode 6, versionName 0.1.5, mismo identificador com.qualitycontrol.suite.stage1layout. Es el primer bloque Avisos revisado e incluido en una APK de prueba. Compilación y pruebas web/Android finalizadas correctamente. Firma estable verificada frente a 0.1.4; manifest comprobado. Archivo preparado: QCS-Prueba-Avisos-0.1.5.apk. Instalación OPPO pendiente. Informe preparado: docs/34-entrega-qcs-0.1.5-y-continuacion.md. Próximo paso: aceptación OPPO y correcciones, luego módulos siguientes por bloques sin APK por cada ajuste.
+
+## B3 · Primer avance de importación y medición, sin APK
+
+Ver docs/35-avance-homologaciones-sin-apk.md. Lector XLSX, mapeo y vista previa confirmada, sesiones cifradas, medición guiada/libre y correcciones con procedencia preparados. Lectura de PVR reales: 15 y 23 características, 30 posiciones; originales intactos. 19 pruebas locales y build web pasan. Revisión integrada Chromium 03/10 pasa importación/cancelación, medición, corrección, reapertura y recuperación con original idéntico. Pendiente aceptación OPPO y contraste de campos/formatos, informes y aprobación. Requeridas/completitud, destino de salida y proveedores no se deciden automáticamente. La APK entregada sigue siendo 0.1.5 con Avisos; este código B3 aún no forma parte de esa APK.
+
+
+## Reparto de trabajo con Claude · 03/10
+
+Usuario pide equilibrar trabajo y evitar que Claude quede esperando arreglos. ChatGPT conserva implementación y verificación B3. Claude puede consolidar B6 Proyectos usando documentación recibida y correcciones acordadas: flujos, modelos de contenido, vínculos a Avisos/Homologaciones, casos y decisiones abiertas, sin duplicar servicios/código ni introducir requisitos. Debe producir entrega propia sin esperar otra revisión B3. No afirmar que el encargo ha sido recibido hasta que el usuario lo traslade.

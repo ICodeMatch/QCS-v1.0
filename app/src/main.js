@@ -1,3 +1,5 @@
+import { HomologacionStore } from "./homologacion-store.js";
+import { HomologacionModule } from "./homologacion-ui.js";
 import { AvisoReports, REPORT_FORMATS } from "./aviso-reports.js";
 import { AvisosStore } from "./avisos-store.js";
 import { AvisosModule } from "./avisos-ui.js";
@@ -31,7 +33,8 @@ let records = [],
   restored = null,
   saveTimer = null,
   queue = Promise.resolve();
-let avisosModule = null;
+let avisosModule = null, homologacionModule = null;
+const homologacionStore = new HomologacionStore(vault);
 const avisosStore = new AvisosStore(vault), avisoReports = new AvisoReports(vault);
 function button(id, text, primary = false) {
   return `<button id="${id}" ${primary ? 'class="primary"' : ""}>${text}</button>`;
@@ -63,7 +66,7 @@ function setScreen(s) {
   $("#lock").hidden = s === "login";
   document.body.dataset.screen = s;
   const title = $(".brand-title");
-  if (title) title.textContent = s === "home" || s === "login" ? "Quality Control Suite" : s === "settings" ? "Ajustes" : s === "records" ? "Registros" : s === "avisos" ? "No conformidades / Avisos" : "CodeMatch";
+  if (title) title.textContent = s === "home" || s === "login" ? "Quality Control Suite" : s === "settings" ? "Ajustes" : s === "records" ? "Registros" : s === "avisos" ? "No conformidades / Avisos" : s === "homologaciones" ? "Homologaciones" : "CodeMatch";
   const nav = $("#bottomnav");
   if (nav) {
     nav.hidden = s === "login";
@@ -88,7 +91,7 @@ function login() {
   records = [];
   editing = null;
   avisosModule = null;
-  root.innerHTML = `<section class="login-panel"><img class="brand-mark brand-mark-large" src="assets/qcs-logo.svg" alt="Logo QCS"><h1>Quality Control Suite</h1><p class="login-subtitle">Gestión de la calidad</p><section class="login-form"><h2>Bienvenido</h2><label>Contraseña<div class="password-row"><input id="password" type="password" autocomplete="current-password"><button id="passwordEye" class="password-eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><small class="password-hint">Al crearla: mínimo 8 caracteres.</small><label class="remember"><input type="checkbox" disabled> Recordarme <span class="badge">Pendiente</span></label>${button("enter", "Entrar", true)}<p class="forgot-row">${button("forgot", "¿Has olvidado la contraseña?")}</p></section><p class="login-caption">Acceso a Quality Control Suite</p><details class="access-note"><summary>Acceso local provisional · QCS Prueba</summary><p>Los datos nuevos se guardan cifrados en este dispositivo. No acredita identidad ni permisos de empresa. Recuperación pendiente: conserva la contraseña; no existe restablecimiento automático.</p></details><small class="build-label">QCS Prueba · 0.1.5 · Avisos</small></section>`;
+  root.innerHTML = `<section class="login-panel"><img class="brand-mark brand-mark-large" src="assets/qcs-logo.svg" alt="Logo QCS"><h1>Quality Control Suite</h1><p class="login-subtitle">Gestión de la calidad</p><section class="login-form"><h2>Bienvenido</h2><label>Contraseña<div class="password-row"><input id="password" type="password" autocomplete="current-password"><button id="passwordEye" class="password-eye" aria-label="Mostrar contraseña"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></div></label><small class="password-hint">Al crearla: mínimo 8 caracteres.</small><label class="remember"><input type="checkbox" disabled> Recordarme <span class="badge">Pendiente</span></label>${button("enter", "Entrar", true)}<p class="forgot-row">${button("forgot", "¿Has olvidado la contraseña?")}</p></section><p class="login-caption">Acceso a Quality Control Suite</p><details class="access-note"><summary>Acceso local provisional · QCS Prueba</summary><p>Los datos nuevos se guardan cifrados en este dispositivo. No acredita identidad ni permisos de empresa. Recuperación pendiente: conserva la contraseña; no existe restablecimiento automático.</p></details><small class="build-label">QCS en desarrollo · Base 0.1.5 · Homologaciones en preparación</small></section>`;
   $("#passwordEye").onclick = () => {
     const p = $("#password");
     p.type = p.type === "password" ? "text" : "password";
@@ -119,10 +122,15 @@ function home() {
     ["project", "Proyectos de calidad", "Acciones y seguimiento", "purple"],
     ["scan", "CodeMatch", "Identificación de piezas", "teal"],
   ];
-  root.innerHTML = `<h1 class="home-title">Inicio</h1><p class="home-subtitle">Selecciona un apartado</p><div class="module-list">${modules.map(([symbol,title,subtitle,color],i) => `<button ${i === 4 ? 'id="open"' : i === 0 ? 'id="openAvisos"' : 'disabled'} class="module-card"><span class="module-icon ${color}">${icon(symbol)}</span><span class="module-copy"><strong>${title}</strong><span>${subtitle}</span>${i === 4 || i === 0 ? "" : '<small class="pending-label">Pendiente</small>'}</span><span class="module-chevron">${icon("chevron")}</span></button>`).join("")}</div><p class="build-label">QCS Prueba · 0.1.5 · Avisos</p>`;
+  root.innerHTML = `<h1 class="home-title">Inicio</h1><p class="home-subtitle">Selecciona un apartado</p><div class="module-list">${modules.map(([symbol,title,subtitle,color],i) => `<button ${i === 4 ? 'id="open"' : i === 0 ? 'id="openAvisos"' : i === 1 ? 'id="openHomologaciones"' : 'disabled'} class="module-card"><span class="module-icon ${color}">${icon(symbol)}</span><span class="module-copy"><strong>${title}</strong><span>${subtitle}</span>${i === 4 || i === 0 || i === 1 ? "" : '<small class="pending-label">Pendiente</small>'}</span><span class="module-chevron">${icon("chevron")}</span></button>`).join("")}</div><p class="build-label">QCS en desarrollo · Base 0.1.5 · Homologaciones en preparación</p>`;
   $("#open").onclick = () => codeMatch();
   $("#openAvisos").onclick = () => run(() => openAvisos());
+  $("#openHomologaciones").onclick = () => run(() => openHomologaciones());
 }
+async function openHomologaciones(){
+ setScreen("homologaciones");homologacionModule=new HomologacionModule({root,store:homologacionStore,say,download,title:text=>{if($(".brand-title"))$(".brand-title").textContent=text;}});await homologacionModule.open();
+}
+async function prepareHomologacionLeave(){if(screen==="homologaciones")await homologacionModule.prepareLeave();}
 async function openAvisos(id) {
   setScreen("avisos");
   avisosModule = new AvisosModule({root,store:avisosStore,reports:avisoReports,download,say,
@@ -187,7 +195,7 @@ async function prepareCodeMatchLeave(){
 }
 function settings() {
   setScreen("settings");
-  root.innerHTML = `<h1>Ajustes</h1><section class="card"><h2>Copias y recuperación</h2><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión se instala aparte. No modifica ni migra datos de instalaciones anteriores. Solo recupera copias cifradas de esta entrega.</p></section><section class="card"><h2>Acceso local</h2><p>Recuperación de contraseña y Recordarme pendientes.</p>${button("lockSettings", "Bloquear acceso")}</section><p class="build-label">QCS Prueba · 0.1.5 · Avisos</p>`;
+  root.innerHTML = `<h1>Ajustes</h1><section class="card"><h2>Copias y recuperación</h2><div class="actions">${button("backup", "Descargar copia cifrada")}${button("restore", "Recuperar copia de esta entrega")}${button("recoverPhoto", "Revisar captura recuperada")}</div><input id="backupFile" type="file" accept=".json" hidden><p>Esta versión se instala aparte. No modifica ni migra datos de instalaciones anteriores. Solo recupera copias cifradas de esta entrega.</p></section><section class="card"><h2>Acceso local</h2><p>Recuperación de contraseña y Recordarme pendientes.</p>${button("lockSettings", "Bloquear acceso")}</section><p class="build-label">QCS en desarrollo · Base 0.1.5 · Homologaciones en preparación</p>`;
   $("#lockSettings").onclick = () => $("#lock").click();
   $("#restore").onclick = () => $("#backupFile").click();
   $("#backupFile").onchange = (e) =>
@@ -667,8 +675,9 @@ async function restorePreview(file) {
         existing = await vault.list(),
         ids = new Set(existing.map((v) => v.id)),
         codes = new Set(records.map((v) => v.code)),
-        fresh = all.filter((v) => ["code","codematch","aviso","aviso-report"].includes(v.kind) && !ids.has(v.id));
+        fresh = all.filter((v) => ["code","codematch","aviso","aviso-report","homologacion"].includes(v.kind) && !ids.has(v.id));
       for (const v of fresh) {
+        if(v.kind==="homologacion"){if(v.type!=="piece"||!Array.isArray(v.characteristics)||!v.header||!v.createdAt||v.source&&(!v.source.data||!v.source.digest||!v.source.mapping))throw Error("Sesión de homologación incompatible.");continue;}
         if(v.kind==="aviso-report"){if(!REPORT_FORMATS[v.format]||v.mime!==REPORT_FORMATS[v.format].mime||!v.data||v.snapshot?.kind!=="aviso"||v.snapshot.id!==v.avisoId||!v.generatedAt)throw Error("Informe de aviso incompatible.");continue;}
         if(v.kind==="aviso"){if(!["internal","provider","customer"].includes(v.type)||!Array.isArray(v.photos)||!v.createdAt)throw Error("Borrador de aviso incompatible.");continue;}
         if(v.kind==="codematch"){if(!v.store||!v.value)throw Error("Copia incompatible.");continue;}
@@ -678,7 +687,7 @@ async function restorePreview(file) {
           );
         codes.add(v.code);
       }
-      root.innerHTML = `<h1>Copia comprobada</h1><p>${fresh.length} registros nuevos; ${all.filter(v=>["code","codematch","aviso","aviso-report"].includes(v.kind)).length-fresh.length} ya existentes, sin sustituir.</p>${button("applyBackup", "Añadir registros de la copia", true)} ${button("cancelBackup", "Cancelar")}`;
+      root.innerHTML = `<h1>Copia comprobada</h1><p>${fresh.length} registros nuevos; ${all.filter(v=>["code","codematch","aviso","aviso-report","homologacion"].includes(v.kind)).length-fresh.length} ya existentes, sin sustituir.</p>${button("applyBackup", "Añadir registros de la copia", true)} ${button("cancelBackup", "Cancelar")}`;
       $("#cancelBackup").onclick = home;
       $("#applyBackup").onclick = () =>
         run(async () => {
@@ -835,6 +844,7 @@ async function previewImport(file) {
 }
 $("#back").onclick = () =>
   run(async () => {
+    if(screen==="homologaciones"){if(!await homologacionModule.goBack()){await refresh();home();}return;}
     if (screen === "avisos") {
       if(!await avisosModule.goBack()){await refresh();home();}return;
     }
@@ -852,6 +862,7 @@ $("#lock").onclick = () =>
     if (screen === "editor") await save();
     await prepareCodeMatchLeave();
     await prepareAvisosLeave();
+  await prepareHomologacionLeave();
     vault.lock();
     login();
     say("Acceso bloqueado.");
@@ -861,6 +872,7 @@ async function navigateTo(destination) {
   if (screen === "editor") await save();
   await prepareCodeMatchLeave();
   await prepareAvisosLeave();
+  await prepareHomologacionLeave();
   await refresh();
   if (destination === "home") home();
   else if (destination === "settings") settings();

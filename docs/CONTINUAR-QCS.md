@@ -56,3 +56,7 @@ Ver docs/35-avance-homologaciones-sin-apk.md. Lector XLSX, mapeo y vista previa 
 ## Reparto de trabajo con Claude · 03/10
 
 Usuario pide equilibrar trabajo y evitar que Claude quede esperando arreglos. ChatGPT conserva implementación y verificación B3. Claude puede consolidar B6 Proyectos usando documentación recibida y correcciones acordadas: flujos, modelos de contenido, vínculos a Avisos/Homologaciones, casos y decisiones abiertas, sin duplicar servicios/código ni introducir requisitos. Debe producir entrega propia sin esperar otra revisión B3. No afirmar que el encargo ha sido recibido hasta que el usuario lo traslade.
+
+### B3 cabeceras revisadas
+
+03/10: 19 campos de cabecera contrastados en PVR.01 y PVR.02; corregidas condiciones F9/F11 (no sus títulos F8/F10). Propuesta automática condicionada a etiquetas reconocidas. Perfil reutilizado visible y deseleccionable; firma incluye regla de límites explícitos. 21 pruebas locales; navegador integrado B3 actualizado. No nueva APK. Primer CI B3, Actions 37106809843, finalizó correctamente.

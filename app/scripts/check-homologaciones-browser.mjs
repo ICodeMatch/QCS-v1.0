@@ -192,6 +192,28 @@ try {
   assert.equal(sha(restored), sha(original));
   await p.locator("#hmNext").click();
   assert.equal(await p.locator("[data-hm-sample]").first().inputValue(), "9.9");
+  await p.locator('[data-nav="home"]').click();
+  await p.locator("#openHomologaciones").click();
+  await p.locator("#hmNew").click();
+  await p
+    .locator("#hmFile")
+    .setInputFiles({
+      name: "Ensayo.xlsx",
+      mimeType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      buffer: original,
+    });
+  await p.locator("#hmProfile").waitFor();
+  const profileId = await p
+    .locator("#hmProfile option")
+    .nth(1)
+    .getAttribute("value");
+  await p.locator("#hmProfile").selectOption(profileId);
+  assert.equal(await p.locator("#hmProfile").inputValue(), profileId);
+  await p.locator("#hmProfile").selectOption("");
+  assert.equal(await p.locator("#hmProfile").inputValue(), "");
+  await p.locator("#hmCancelImport").click();
+  await p.locator('[data-nav="home"]').click();
   await fresh.close();
   assert.deepEqual(errors, []);
   await writeFile(
@@ -205,6 +227,7 @@ try {
         correctionHistory: true,
         originalBytesIdentical: true,
         encryptedRestore: true,
+        reusableMappingSelection: true,
         pageErrors: errors,
       },
       null,

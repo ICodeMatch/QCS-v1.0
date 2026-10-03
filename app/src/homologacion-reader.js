@@ -251,28 +251,44 @@ export function suggestHomologationMapping(sheet) {
       bindings,
       percentEncoding: "fraction",
       explicitLimits: false,
-      header: {
-        document: "O1",
-        date: "O2",
-        code: "O3",
-        revision: "O4",
-        description: "C5",
-        customer: "J5",
-        supplier: "J6",
-        performedBy: "O5",
-        batch: "O6",
-        process: "C8",
-        operation: "C9",
-        workstation: "C10",
-        machine: "C11",
-        dimensionalConditions: "F8",
-        functionalConditions: "F10",
-        equipmentId: "O8",
-        equipment: "O9",
-        certificate: "O10",
-        calibrationUntil: "O11",
-        observations: "C56",
-      },
+      header: Object.fromEntries(
+        [
+          ["document", "M1", "No Document:", "O1"],
+          ["date", "M2", "Date:", "O2"],
+          ["code", "M3", "Product Code:", "O3"],
+          ["revision", "M4", "Drawing Rev.:", "O4"],
+          ["description", "A5", "Description:", "C5"],
+          ["customer", "H5", "Customer:", "J5"],
+          ["supplier", "H6", "Supplier:", "J6"],
+          ["performedBy", "M5", "Performed by:", "O5"],
+          ["batch", "M6", "PO / Batch:", "O6"],
+          ["process", "A8", "Process:", "C8"],
+          ["operation", "A9", "Operation No.:", "C9"],
+          ["workstation", "A10", "Line / Workstation:", "C10"],
+          ["machine", "A11", "Machine / Tool ID:", "C11"],
+          [
+            "dimensionalConditions",
+            "F8",
+            "Measurement Conditions (Dimensional)",
+            "F9",
+          ],
+          [
+            "functionalConditions",
+            "F10",
+            "Test Conditions (Functional)",
+            "F11",
+          ],
+          ["equipmentId", "M8", "Equipment ID:", "O8"],
+          ["equipment", "M9", "Measuring Equipment:", "O9"],
+          ["certificate", "M10", "Calibration Certificated No:", "O10"],
+          ["calibrationUntil", "M11", "Calibration Valid Until:", "O11"],
+        ]
+          .filter(
+            ([, labelCell, label]) =>
+              cell(sheet, labelCell).displayValue === label,
+          )
+          .map(([field, , , address]) => [field, address]),
+      ),
     };
   }
   return {
@@ -504,6 +520,7 @@ export async function previewHomologation(workbook, mapping) {
         bindings: mapping.bindings,
         header: mapping.header,
         percentEncoding: mapping.percentEncoding,
+        explicitLimits: !!mapping.explicitLimits,
         identifiers: characteristics.map((c) => [
           c.sourceCell,
           c.sourceIdentifier,

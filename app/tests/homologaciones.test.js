@@ -256,3 +256,93 @@ test("Homologaciones: formato literal numérico y fecha se muestran sin cambiar 
   assert.equal(w.sheets[0].cells.E1.displayValue, "2026-10-03");
   assert.match(w.sheets[0].cells.E1.rawValue, /^\d/);
 });
+
+test("Homologaciones: cabecera propone casillas de datos solo con etiquetas reconocidas", async () => {
+  const { w } = await fixture();
+  const s = w.sheets[0];
+  assert.deepEqual(suggestHomologationMapping(s).header, {});
+  s.cells.F8 = { displayValue: "Measurement Conditions (Dimensional)" };
+  s.cells.F10 = { displayValue: "Test Conditions (Functional)" };
+  s.cells.M3 = { displayValue: "Product Code:" };
+  s.cells.F9 = {
+    rawValue: "20 ºC",
+    numericText: "20 ºC",
+    displayValue: "20 ºC",
+    sourceCell: "F9",
+  };
+  s.cells.F11 = {
+    rawValue: "Ensayo local",
+    numericText: "Ensayo local",
+    displayValue: "Ensayo local",
+    sourceCell: "F11",
+  };
+  const m = suggestHomologationMapping(s);
+  assert.equal(m.header.dimensionalConditions, "F9");
+  assert.equal(m.header.functionalConditions, "F11");
+  assert.equal(m.header.code, "O3");
+  const p = await previewHomologation(w, m);
+  assert.equal(p.header.dimensionalConditions.value, "20 ºC");
+  assert.equal(p.header.functionalConditions.value, "Ensayo local");
+  const other = await previewHomologation(w, { ...m, explicitLimits: true });
+  assert.notEqual(p.structuralSignature, other.structuralSignature);
+});
+
+test("Homologaciones: mapeo manual por filas conserva orden, duplicados y columnas de muestras", async () => {
+  const book = new ExcelJS.Workbook(),
+    ws = book.addWorksheet("Filas");
+  for (const r of [3, 7]) {
+    ws.getCell("B" + r).value = "1.0";
+    ws.getCell("C" + r).value = "%";
+    ws.getCell("D" + r).value = "Resistencia";
+    ws.getCell("E" + r).value = "5";
+    ws.getCell("F" + r).value = "-5";
+    ws.getCell("G" + r).value = "100";
+  }
+  ws.getCell("K7").value = "95";
+  ws.getCell("L7").value = "105";
+  ws.getCell("K3").value = "94.9";
+  const w = await openHomologationExcel(
+    new Uint8Array(await book.xlsx.writeBuffer()),
+    "Rows.xlsx",
+    new JSDOM("").window.DOMParser,
+  );
+  const mapping = {
+    sheetName: "Filas",
+    orientation: "rows",
+    characterRanges: "7,3",
+    sampleRange: "K:L",
+    bindings: {
+      identifier: "B",
+      type: "C",
+      specification: "D",
+      upperTolerance: "E",
+      lowerTolerance: "F",
+      nominal: "G",
+    },
+    header: {},
+    percentEncoding: "percent",
+    explicitLimits: false,
+  };
+  const p = await previewHomologation(w, mapping);
+  assert.deepEqual(
+    p.characteristics.map((c) => c.sourceCell),
+    ["B7", "B3"],
+  );
+  assert.deepEqual(
+    p.characteristics[0].samples.map((s) => s.sourceCell),
+    ["K7", "L7"],
+  );
+  assert.equal(
+    evaluateCharacteristic(p.characteristics[0]).conformity,
+    "Conforme",
+  );
+  assert.equal(
+    evaluateCharacteristic(p.characteristics[1]).conformity,
+    "No conforme",
+  );
+  assert.equal(p.warnings.filter((w) => w.code === "A4").length, 2);
+  await assert.rejects(
+    () => previewHomologation(w, { ...mapping, sampleRange: "K:AA" }),
+    /fuera/,
+  );
+});

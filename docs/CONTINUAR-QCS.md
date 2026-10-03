@@ -60,3 +60,8 @@ Usuario pide equilibrar trabajo y evitar que Claude quede esperando arreglos. Ch
 ### B3 cabeceras revisadas
 
 03/10: 19 campos de cabecera contrastados en PVR.01 y PVR.02; corregidas condiciones F9/F11 (no sus títulos F8/F10). Propuesta automática condicionada a etiquetas reconocidas. Perfil reutilizado visible y deseleccionable; firma incluye regla de límites explícitos. 21 pruebas locales; navegador integrado B3 actualizado. No nueva APK. Primer CI B3, Actions 37106809843, finalizó correctamente.
+
+
+## B6 corregido para revisión de Claude · 03/10
+
+El usuario autoriza corrección directa seguida de revisión de la otra IA. Claude confirmó que no tenía ajustes en marcha. ChatGPT corrigió documento y script en docs/claude/B6_PREPARADO_PARA_IMPLEMENTACION.md y b6calc_completo.py; 16 pruebas de referencia pasan, salida y registro incluidos. Corrige eficacia negativa 3/5=60%, todas canceladas sin porcentaje, bloqueos desde datos, D6/D7/D8 y reuniones/DateOnly. No implementa B6 productivo ni aprueba FAC/D20/compuertas/roles/numeración. Claude revisa commit concreto; ChatGPT continúa B3. Sin nueva APK.

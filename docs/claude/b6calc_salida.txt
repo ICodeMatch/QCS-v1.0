@@ -1,0 +1,171 @@
+PRJ-S1 corregido — supuestos [N], sin validación funcional QCS
+Referencia: 2026-10-26T10:00:00+01:00
+{
+  "progress": {
+    "completed": 2,
+    "considered": 5,
+    "cancelled": 1,
+    "percent": 40.0,
+    "label": "2 de 5; 1 canceladas no cuentan"
+  },
+  "alternatives": {
+    "including_cancelled": 33.333333333333336,
+    "cancelled_as_completed": 50.0
+  },
+  "overdue": [
+    "A2",
+    "F2"
+  ],
+  "tasks": {
+    "U1": {
+      "Hoy": [
+        "A3"
+      ],
+      "Más adelante": [
+        "B2"
+      ],
+      "Vencidas": [
+        "F2"
+      ],
+      "Sin fecha": [
+        "F3"
+      ]
+    },
+    "U2": {
+      "Vencidas": [
+        "A2"
+      ],
+      "Más adelante": [
+        "A5"
+      ],
+      "Esta semana": [
+        "B1"
+      ]
+    }
+  },
+  "before_D8": [
+    [
+      "Acciones abiertas",
+      [
+        "A2",
+        "A3",
+        "A5"
+      ]
+    ],
+    [
+      "Pasos previos a D8 sin completar",
+      [
+        "D6",
+        "D7"
+      ]
+    ],
+    [
+      "Actividad de verificación pendiente",
+      [
+        "A5"
+      ]
+    ]
+  ],
+  "project_close": [
+    [
+      "Acciones abiertas",
+      [
+        "A2",
+        "A3",
+        "A5"
+      ]
+    ],
+    [
+      "Pasos previos a D8 sin completar",
+      [
+        "D6",
+        "D7"
+      ]
+    ],
+    [
+      "Actividad de verificación pendiente",
+      [
+        "A5"
+      ]
+    ],
+    [
+      "D8 cierre pendiente",
+      [
+        "D8"
+      ]
+    ]
+  ],
+  "fac_verification": [
+    [
+      "Causa raíz sin verificación identificada",
+      []
+    ],
+    [
+      "Acciones correctivas/preventivas abiertas",
+      [
+        "F2"
+      ]
+    ]
+  ],
+  "fac_approval": [
+    [
+      "Causa raíz sin verificación identificada",
+      []
+    ],
+    [
+      "Acciones correctivas/preventivas abiertas",
+      [
+        "F2"
+      ]
+    ],
+    [
+      "Actividad de verificación pendiente",
+      [
+        "F3"
+      ]
+    ]
+  ],
+  "calendar": {
+    "2026-10-24": [
+      "F2"
+    ],
+    "2026-10-25": [
+      "A2"
+    ],
+    "2026-10-26": [
+      "A3"
+    ],
+    "2026-10-27": [
+      "B1"
+    ],
+    "2026-11-03": [
+      "B2"
+    ],
+    "2026-11-15": [
+      "A5"
+    ]
+  },
+  "monitor": {
+    "total": 11,
+    "opened": 7,
+    "completed": 3,
+    "cancelled": 1,
+    "overdue": 2,
+    "active_projects": 2,
+    "projects_with_overdue": 1,
+    "open_facs": 1,
+    "facs_with_overdue": 1
+  },
+  "meetings": {
+    "R1": [
+      "2026-10-24T07:00:00+00:00"
+    ],
+    "R2": [
+      "2026-10-26T08:00:00+00:00"
+    ],
+    "repeated": [
+      "2026-10-25T00:30:00+00:00",
+      "2026-10-25T01:30:00+00:00"
+    ]
+  }
+}

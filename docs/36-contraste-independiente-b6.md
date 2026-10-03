@@ -21,3 +21,8 @@
 Claude corrige documento y script de referencia con datos de resultado/verificación/causa y assertions de los subcasos existentes; entrega resultados diferenciados de cálculos base/textos fijos. ChatGPT conserva B3 implementación. No duplicar servicios B7a ni generar una APK por esta auditoría. No modificar ni cerrar decisiones de usuario mediante defaults.
 
 Verificador reproducible: docs/scripts/verificar-prj-s1.py. Correcciones previamente vigentes: docs/18-contratos-v0.2-y-b6-revisado.md.
+
+
+## Actualización 03/10: corrección realizada por ChatGPT
+
+Tras confirmar Claude que no había modificaciones en marcha, el usuario autorizó corregir directamente. Entrega corregida: docs/claude/B6_PREPARADO_PARA_IMPLEMENTACION.md y docs/claude/b6calc_completo.py; salida y registro de 16 pruebas incluidos. Ahora Claude revisa estos archivos concretos. El apartado anterior registra lo detectado en la entrega original; no describe defectos pendientes de la nueva versión sin nueva revisión. No se ha implementado B6 productivo.

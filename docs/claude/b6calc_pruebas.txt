@@ -1,0 +1,21 @@
+test_all_cancelled (__main__.Checks.test_all_cancelled) ... ok
+test_ambiguous_and_nonexistent_meetings (__main__.Checks.test_ambiguous_and_nonexistent_meetings) ... ok
+test_base_progress_and_counts (__main__.Checks.test_base_progress_and_counts) ... ok
+test_calendar (__main__.Checks.test_calendar) ... ok
+test_cause_is_evaluated (__main__.Checks.test_cause_is_evaluated) ... ok
+test_complete_does_not_prove_effective (__main__.Checks.test_complete_does_not_prove_effective) ... ok
+test_d6_independent_of_d7 (__main__.Checks.test_d6_independent_of_d7) ... ok
+test_d8_no_circular_prerequisite (__main__.Checks.test_d8_no_circular_prerequisite) ... ok
+test_due_dates_and_tasks (__main__.Checks.test_due_dates_and_tasks) ... ok
+test_fac_data_driven (__main__.Checks.test_fac_data_driven) ... ok
+test_meetings_offsets (__main__.Checks.test_meetings_offsets) ... ok
+test_mixed_cancelled (__main__.Checks.test_mixed_cancelled) ... ok
+test_monitor_changes_with_data (__main__.Checks.test_monitor_changes_with_data) ... ok
+test_negative_efficacy_progress (__main__.Checks.test_negative_efficacy_progress) ... ok
+test_no_actions (__main__.Checks.test_no_actions) ... ok
+test_positive_without_verification (__main__.Checks.test_positive_without_verification) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.001s
+
+OK

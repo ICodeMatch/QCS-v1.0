@@ -65,3 +65,8 @@ Usuario pide equilibrar trabajo y evitar que Claude quede esperando arreglos. Ch
 ## B6 corregido para revisión de Claude · 03/10
 
 El usuario autoriza corrección directa seguida de revisión de la otra IA. Claude confirmó que no tenía ajustes en marcha. ChatGPT corrigió documento y script en docs/claude/B6_PREPARADO_PARA_IMPLEMENTACION.md y b6calc_completo.py; 16 pruebas de referencia pasan, salida y registro incluidos. Corrige eficacia negativa 3/5=60%, todas canceladas sin porcentaje, bloqueos desde datos, D6/D7/D8 y reuniones/DateOnly. No implementa B6 productivo ni aprueba FAC/D20/compuertas/roles/numeración. Claude revisa commit concreto; ChatGPT continúa B3. Sin nueva APK.
+
+
+## B3 · Validación de mapeo y recuperación, 03/10
+
+Ver docs/37-homologaciones-mapeo-y-recuperacion.md. Coordenadas de campos/cabeceras validadas antes de vista previa; original comparado por tamaño/SHA-256 antes de recuperar, claves/procedencia de sesión comprobadas y original/mapeo vinculado protegidos al guardar. 23 pruebas locales y build pasan; navegador rechaza copia cifrada sintética con original alterado sin añadir registros ni perder las dos sesiones previas. Dos PVR reales validan y no se publican. Sin nueva APK. Claude amplía B6 mientras ChatGPT implementa B3; su nueva ampliación solo recibida por resumen. Tres grupos antes de D8, cuatro para cierre P-A; no omitir eficacia A5 pendiente.

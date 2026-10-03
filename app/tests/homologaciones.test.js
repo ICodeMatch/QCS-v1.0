@@ -264,6 +264,7 @@ test("Homologaciones: cabecera propone casillas de datos solo con etiquetas reco
   s.cells.F8 = { displayValue: "Measurement Conditions (Dimensional)" };
   s.cells.F10 = { displayValue: "Test Conditions (Functional)" };
   s.cells.M3 = { displayValue: "Product Code:" };
+  s.columnCount = 15;
   s.cells.F9 = {
     rawValue: "20 ºC",
     numericText: "20 ºC",
@@ -345,4 +346,68 @@ test("Homologaciones: mapeo manual por filas conserva orden, duplicados y column
     () => previewHomologation(w, { ...mapping, sampleRange: "K:AA" }),
     /fuera/,
   );
+});
+
+test("Homologaciones: mapeo inválido se rechaza antes de crear vista previa", async () => {
+  const { w } = await fixture(),
+    m = suggestHomologationMapping(w.sheets[0]);
+  for (const row of ["1.5", "0", "-1", "texto", "99999"])
+    await assert.rejects(
+      () =>
+        previewHomologation(w, {
+          ...m,
+          bindings: { ...m.bindings, nominal: row },
+        }),
+      /Mapeo de Nominal/,
+    );
+  await assert.rejects(
+    () => previewHomologation(w, { ...m, header: { code: "ZZ999" } }),
+    /Cabecera Código/,
+  );
+  await assert.rejects(
+    () => previewHomologation(w, { ...m, orientation: "diagonal" }),
+    /Orientación/,
+  );
+  await assert.rejects(
+    () => previewHomologation(w, { ...m, percentEncoding: "guess" }),
+    /Escala/,
+  );
+  const p = await previewHomologation(w, {
+    ...m,
+    bindings: { ...m.bindings, identifier: "" },
+  });
+  assert.equal(p.characteristics[0].sourceIdentifier, "");
+  assert.equal(p.characteristics[0].sourceCell, "B5");
+});
+
+test("Homologaciones: copia validada conserva original, detecta bytes alterados y claves duplicadas", async () => {
+  const { validateHomologation } = await import(
+    "../src/homologacion-validation.js"
+  );
+  const { p } = await fixture(),
+    rows = new Map(),
+    vault = {
+      get: async (id) => structuredClone(rows.get(id)),
+      put: async (id, d) => rows.set(id, structuredClone(d)),
+    };
+  const store = new HomologacionStore(vault);
+  let d = await store.confirmImport(store.create(), p);
+  await validateHomologation(d, { verifyOriginal: true });
+  const bad = structuredClone(d);
+  bad.source.data = Buffer.from("No es el original").toString("base64");
+  await assert.rejects(
+    () => validateHomologation(bad, { verifyOriginal: true }),
+    /alterado/,
+  );
+  const duplicate = structuredClone(d);
+  duplicate.characteristics[1].internalKey =
+    duplicate.characteristics[0].internalKey;
+  await assert.rejects(() => validateHomologation(duplicate), /incompatible/);
+  await assert.rejects(() => store.save(bad), /original y su mapeo/);
+  const remapped = structuredClone(d);
+  remapped.source.mapping.sampleRange = "14:14";
+  await assert.rejects(() => store.save(remapped), /original y su mapeo/);
+  assert.equal(rows.get(d.id).source.data, p.original.data);
+  const draft = store.create();
+  await validateHomologation(draft, { verifyOriginal: true });
 });

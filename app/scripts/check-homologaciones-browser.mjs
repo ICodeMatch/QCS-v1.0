@@ -1,3 +1,4 @@
+import "fake-indexeddb/auto";
 import assert from "node:assert/strict";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
@@ -195,14 +196,12 @@ try {
   await p.locator('[data-nav="home"]').click();
   await p.locator("#openHomologaciones").click();
   await p.locator("#hmNew").click();
-  await p
-    .locator("#hmFile")
-    .setInputFiles({
-      name: "Ensayo.xlsx",
-      mimeType:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      buffer: original,
-    });
+  await p.locator("#hmFile").setInputFiles({
+    name: "Ensayo.xlsx",
+    mimeType:
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    buffer: original,
+  });
   await p.locator("#hmProfile").waitFor();
   const profileId = await p
     .locator("#hmProfile option")
@@ -214,6 +213,33 @@ try {
   assert.equal(await p.locator("#hmProfile").inputValue(), "");
   await p.locator("#hmCancelImport").click();
   await p.locator('[data-nav="home"]').click();
+  // Copia cifrada válida cuyo original interno es incoherente: rechazo antes de escribir.
+  const corrupt = structuredClone(record);
+  corrupt.id = crypto.randomUUID();
+  corrupt.source.data = Buffer.from("Original interno alterado").toString(
+    "base64",
+  );
+  const nodeVault = new Vault();
+  await nodeVault.open();
+  await nodeVault.unlock("12345678");
+  await nodeVault.createMany([corrupt]);
+  const corruptPath = `${out}/copia-original-alterado.json`;
+  await writeFile(corruptPath, JSON.stringify(await nodeVault.backup()));
+  nodeVault.db.close();
+  await p.locator('[data-nav="settings"]').click();
+  await p.locator("#backupFile").setInputFiles(corruptPath);
+  await p.locator("#backupPassword").fill("12345678");
+  await p.locator("#inspectBackup").click();
+  await p
+    .locator("#status")
+    .filter({ hasText: "alterado o incompleto" })
+    .waitFor();
+  assert.equal(await p.locator("#applyBackup").count(), 0);
+  await p.locator('[data-nav="home"]').click();
+  await p.locator("#openHomologaciones").click();
+  await p.locator("#hmSessions").click();
+  await p.locator("[data-hm-open]").first().waitFor();
+  assert.equal(await p.locator("[data-hm-open]").count(), 2);
   await fresh.close();
   assert.deepEqual(errors, []);
   await writeFile(
@@ -228,6 +254,7 @@ try {
         originalBytesIdentical: true,
         encryptedRestore: true,
         reusableMappingSelection: true,
+        corruptOriginalRejectedWithoutWrite: true,
         pageErrors: errors,
       },
       null,

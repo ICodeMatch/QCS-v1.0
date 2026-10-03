@@ -1,3 +1,4 @@
+import { validateHomologation } from "./homologacion-validation.js";
 export class HomologacionStore {
   constructor(vault) {
     this.vault = vault;
@@ -28,12 +29,25 @@ export class HomologacionStore {
     return d;
   }
   async save(draft, summary = "Sesión guardada") {
-    if (draft.kind !== "homologacion" || !Array.isArray(draft.characteristics))
-      throw Error("Sesión incompatible.");
+    await validateHomologation(draft);
     const copy = structuredClone(draft),
       now = new Date().toISOString(),
       before = await this.vault.get(copy.id),
       changes = [];
+    if (before?.source) {
+      if (
+        !copy.source ||
+        before.source.data !== copy.source.data ||
+        before.source.digest !== copy.source.digest ||
+        JSON.stringify(before.source.mapping) !==
+          JSON.stringify(copy.source.mapping)
+      )
+        throw Error(
+          "El original y su mapeo ya están vinculados; se conservan sin sustituir.",
+        );
+    } else if (copy.source) {
+      await validateHomologation(copy, { verifyOriginal: true });
+    }
     for (const c of copy.characteristics) {
       const old = before?.characteristics?.find(
         (x) => x.internalKey === c.internalKey,

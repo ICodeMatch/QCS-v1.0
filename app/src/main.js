@@ -1,3 +1,4 @@
+import { validateHomologation } from "./homologacion-validation.js";
 import { HomologacionStore } from "./homologacion-store.js";
 import { HomologacionModule } from "./homologacion-ui.js";
 import { AvisoReports, REPORT_FORMATS } from "./aviso-reports.js";
@@ -677,7 +678,7 @@ async function restorePreview(file) {
         codes = new Set(records.map((v) => v.code)),
         fresh = all.filter((v) => ["code","codematch","aviso","aviso-report","homologacion"].includes(v.kind) && !ids.has(v.id));
       for (const v of fresh) {
-        if(v.kind==="homologacion"){if(v.type!=="piece"||!Array.isArray(v.characteristics)||!v.header||!v.createdAt||v.source&&(!v.source.data||!v.source.digest||!v.source.mapping))throw Error("Sesión de homologación incompatible.");continue;}
+        if(v.kind==="homologacion"){await validateHomologation(v,{verifyOriginal:true});continue;}
         if(v.kind==="aviso-report"){if(!REPORT_FORMATS[v.format]||v.mime!==REPORT_FORMATS[v.format].mime||!v.data||v.snapshot?.kind!=="aviso"||v.snapshot.id!==v.avisoId||!v.generatedAt)throw Error("Informe de aviso incompatible.");continue;}
         if(v.kind==="aviso"){if(!["internal","provider","customer"].includes(v.type)||!Array.isArray(v.photos)||!v.createdAt)throw Error("Borrador de aviso incompatible.");continue;}
         if(v.kind==="codematch"){if(!v.store||!v.value)throw Error("Copia incompatible.");continue;}

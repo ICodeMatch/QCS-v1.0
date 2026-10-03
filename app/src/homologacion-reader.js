@@ -329,7 +329,46 @@ export function mappingRange(raw, columns, max) {
 export async function previewHomologation(workbook, mapping) {
   const sheet = workbook.sheets.find((s) => s.name === mapping.sheetName);
   if (!sheet) throw Error("Selecciona una hoja.");
+  if (!["columns", "rows"].includes(mapping.orientation))
+    throw Error("Orientación de mapeo inválida.");
+  if (!mapping.bindings || !mapping.header)
+    throw Error("Mapeo incompleto: revisa campos y cabecera.");
+  if (
+    ![null, undefined, "fraction", "percent"].includes(mapping.percentEncoding)
+  )
+    throw Error("Escala de porcentaje inválida.");
   const columns = mapping.orientation === "columns";
+  for (const [key, label] of CHARACTER_FIELDS) {
+    const raw = mapping.bindings[key];
+    if (raw === null || raw === undefined || raw === "") continue;
+    const text = String(raw);
+    const axis =
+      columns && /^[1-9]\d*$/.test(text)
+        ? Number(text)
+        : !columns && /^[A-Z]+$/i.test(text)
+          ? columnNumber(text)
+          : NaN;
+    if (
+      !Number.isSafeInteger(axis) ||
+      axis < 1 ||
+      axis > (columns ? sheet.rowCount : sheet.columnCount)
+    )
+      throw Error(
+        `Mapeo de ${label}: ${columns ? "fila" : "columna"} inválida o fuera de la hoja.`,
+      );
+  }
+  for (const [key, label] of HEADER_FIELDS) {
+    const binding = mapping.header[key];
+    if (!binding) continue;
+    const match = String(binding).match(/^([A-Z]+)([1-9]\d*)$/i);
+    if (
+      !match ||
+      columnNumber(match[1]) > sheet.columnCount ||
+      !Number.isSafeInteger(Number(match[2])) ||
+      Number(match[2]) > sheet.rowCount
+    )
+      throw Error(`Cabecera ${label}: celda inválida o fuera de la hoja.`);
+  }
   const positions = mappingRange(
       mapping.characterRanges,
       columns,
@@ -398,7 +437,11 @@ export async function previewHomologation(workbook, mapping) {
       internalKey: crypto.randomUUID(),
       sourceIdentifier: identifier,
       sourcePosition: position,
-      sourceCell: sources.identifier.sourceCell,
+      sourceCell:
+        sources.identifier.sourceCell ||
+        sources.type.sourceCell ||
+        sources.specification.sourceCell ||
+        sources.nominal.sourceCell,
       sourceSheet: sheet.name,
       source: sources,
       specification: sources.specification.displayValue,
